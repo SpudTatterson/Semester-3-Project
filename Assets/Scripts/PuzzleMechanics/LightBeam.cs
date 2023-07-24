@@ -1,15 +1,18 @@
+using System.Net;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+[RequireComponent(typeof(LineRenderer))]
 public class LightBeam : MonoBehaviour
 {
     [Header("Settings")]
     [SerializeField] LayerMask reflectiveLayer;
+    [SerializeField] string reflectiveTag = "Reflective";
     [SerializeField] float lightBeamMaxDistance = 100f;
-    [SerializeField] UnityEvent ReceiveBeamEvents;
+    [SerializeField] UnityEvent receiveBeamEvents;
     [SerializeField] bool shootBeam = true;
     [SerializeField] bool initialBeam = false;
 
@@ -22,44 +25,52 @@ public class LightBeam : MonoBehaviour
     void Start()
     {
         lr = GetComponent<LineRenderer>();
-        if(initialBeam)
-        {
-            beamLocation = transform.position;
-            direction = transform.forward;
-        }
+        if(initialBeam) lr.enabled = true;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(initialBeam) UpdateBeamDirection();
         if(initialBeam || (receivedBeam && shootBeam)) ShootBeam();
-        Debug.DrawRay(beamLocation, direction * 10);
+        if(!receivedBeam && !initialBeam) lr.enabled = false;
+        receivedBeam = false;
+        
+        //Debug.DrawRay(beamLocation, direction * 10);
     }
-
+    void UpdateBeamDirection()
+    {
+        beamLocation = transform.position;
+        direction = transform.forward;
+    }
     void ReceiveBeam(RaycastHit hit, Vector3 InitialDirection)
     {
         direction = CalculateNewBeamDirection(InitialDirection ,hit);
         beamLocation = hit.point;
         receivedBeam = true;
-        ReceiveBeamEvents.Invoke();
+        lr.enabled = true;
+        receiveBeamEvents.Invoke();
     }
     public void ShootBeam()
     {
         RaycastHit hit;
-        if(Physics.Raycast(beamLocation, direction, out hit, lightBeamMaxDistance, reflectiveLayer))
+        if(Physics.Raycast(beamLocation, direction, out hit, lightBeamMaxDistance))
         {
-            hitPoint = hit.point;
-            LightBeam beam;
-            if(beam = hit.transform.GetComponent<LightBeam>())
+            if(hit.transform.tag == reflectiveTag) 
             {
-                beam.ReceiveBeam(hit, direction);
+                hitPoint = hit.point;
+                LightBeam beam;
+                if(beam = hit.transform.GetComponent<LightBeam>())
+                {
+                    beam.ReceiveBeam(hit, direction);
+                }
+                SetBeamPositions();
             }
-            SetBeamPositions();
-        }
-        else if(Physics.Raycast(beamLocation, direction, out hit, lightBeamMaxDistance))
-        {
-            hitPoint = hit.point;
-            SetBeamPositions();
+            else
+            {
+                hitPoint = hit.point;
+                SetBeamPositions();
+            }
         }
     }
     Vector3 CalculateNewBeamDirection(Vector3 inDirection, RaycastHit hit)
