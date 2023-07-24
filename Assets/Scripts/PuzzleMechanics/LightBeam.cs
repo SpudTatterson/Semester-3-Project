@@ -25,7 +25,7 @@ public class LightBeam : MonoBehaviour
     void Start()
     {
         lr = GetComponent<LineRenderer>();
-        if(initialBeam) lr.enabled = true;
+        lr.enabled = initialBeam; // Disable the lineRenderer by default if the object is not a beam emitter 
     }
 
     // Update is called once per frame
@@ -34,7 +34,7 @@ public class LightBeam : MonoBehaviour
         if(initialBeam) UpdateBeamDirection();
         if(initialBeam || (receivedBeam && shootBeam)) ShootBeam();
         if(!receivedBeam && !initialBeam) lr.enabled = false;
-        receivedBeam = false;
+        receivedBeam = false;       // Make sure that the beam is disabled if nothing is hit
         
         //Debug.DrawRay(beamLocation, direction * 10);
     }
@@ -59,7 +59,8 @@ public class LightBeam : MonoBehaviour
             if(hit.transform.tag == reflectiveTag) 
             {
                 hitPoint = hit.point;
-                LightBeam beam;
+                //check if the hit object can reflect the beam and trigger the second beam
+                LightBeam beam; 
                 if(beam = hit.transform.GetComponent<LightBeam>())
                 {
                     beam.ReceiveBeam(hit, direction);
