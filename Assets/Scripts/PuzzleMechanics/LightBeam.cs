@@ -68,19 +68,14 @@ public class LightBeam : MonoBehaviour
         if(Physics.Raycast(beamLocation, direction, out hit, lightBeamMaxDistance))
         {
             if(hit.transform.tag == reflectiveTag) //check if the hit object can reflect the beam and trigger the second beam 
-            {
-                   
+            {      
                 LightBeam beam; 
                 if(beam = hit.transform.GetComponentInParent<LightBeam>())
                 {
                     beam.ReceiveBeam(hit, direction);
-                }
-                SetBeamPositions();
+                }        
             }
-            else
-            {
-                SetBeamPositions();
-            }
+            SetBeamPositions();
             hitPoint = hit.point;
             distance = hit.distance;
         }
