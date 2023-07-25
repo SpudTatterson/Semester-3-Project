@@ -1,20 +1,21 @@
-using System.Net;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 [RequireComponent(typeof(LineRenderer))]
 public class LightBeam : MonoBehaviour
 {
+    [Header("References")]
+    [SerializeField] Light lightObject;
+    [SerializeField] Transform initialBeamShootPoint;
+
+
     [Header("Settings")]
-    [SerializeField] LayerMask reflectiveLayer;
     [SerializeField] string reflectiveTag = "Reflective";
     [SerializeField] float lightBeamMaxDistance = 100f;
     [SerializeField] UnityEvent receiveBeamEvents;
     [SerializeField] bool shootBeam = true;
     [SerializeField] bool initialBeam = false;
+    [SerializeField] float distance;
 
     LineRenderer lr;
     bool receivedBeam = false;
@@ -34,14 +35,24 @@ public class LightBeam : MonoBehaviour
         if(initialBeam) UpdateBeamDirection();
         if(initialBeam || (receivedBeam && shootBeam)) ShootBeam();
         if(!receivedBeam && !initialBeam) lr.enabled = false;
+        UpdateLight();
         receivedBeam = false;       // Make sure that the beam is disabled if nothing is hit
         
-        //Debug.DrawRay(beamLocation, direction * 10);
+        //Debug.DrawRay(beamLocation, direction * 10);      
     }
     void UpdateBeamDirection()
     {
-        beamLocation = transform.position;
+        beamLocation = initialBeamShootPoint.position;
         direction = transform.forward;
+        receivedBeam = true;
+    }
+    void UpdateLight()
+    {
+        lightObject.range = distance * 1.5f;
+        lightObject.transform.position = beamLocation;
+        Quaternion targetRotation = Quaternion.LookRotation(direction, transform.up);
+        lightObject.transform.rotation = targetRotation;
+        lightObject.enabled = receivedBeam;
     }
     void ReceiveBeam(RaycastHit hit, Vector3 InitialDirection)
     {
@@ -56,12 +67,11 @@ public class LightBeam : MonoBehaviour
         RaycastHit hit;
         if(Physics.Raycast(beamLocation, direction, out hit, lightBeamMaxDistance))
         {
-            if(hit.transform.tag == reflectiveTag) 
+            if(hit.transform.tag == reflectiveTag) //check if the hit object can reflect the beam and trigger the second beam 
             {
-                hitPoint = hit.point;
-                //check if the hit object can reflect the beam and trigger the second beam
+                   
                 LightBeam beam; 
-                if(beam = hit.transform.GetComponent<LightBeam>())
+                if(beam = hit.transform.GetComponentInParent<LightBeam>())
                 {
                     beam.ReceiveBeam(hit, direction);
                 }
@@ -69,9 +79,10 @@ public class LightBeam : MonoBehaviour
             }
             else
             {
-                hitPoint = hit.point;
                 SetBeamPositions();
             }
+            hitPoint = hit.point;
+            distance = hit.distance;
         }
     }
     Vector3 CalculateNewBeamDirection(Vector3 inDirection, RaycastHit hit)
@@ -80,7 +91,7 @@ public class LightBeam : MonoBehaviour
         return newBeamDirection;
     }
     void SetBeamPositions()
-    {
+    {  
         lr.SetPosition(0, beamLocation);
         lr.SetPosition(1, hitPoint);
     }
