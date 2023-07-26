@@ -9,38 +9,43 @@ public class Rotatable : MonoBehaviour
     [SerializeField] bool active = false;
 
     float currentAngle;
+    float targetAngle; 
+    Vector2 calculatedMinMaxAngles;
+
     // Start is called before the first frame update
     void Start()
     {
-        currentAngle = transform.rotation.y;
+        currentAngle = transform.localEulerAngles.y;
+        calculatedMinMaxAngles.x = currentAngle + minMaxAngle.x;
+        calculatedMinMaxAngles.y = currentAngle + minMaxAngle.y;
+        targetAngle = currentAngle; 
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(active)
+        if (active)
         {
-            if(Input.GetKey(KeyCode.E))
+            if (Input.GetKey(KeyCode.E))
             {
-                RotateRight(); 
+                targetAngle += rotationSpeed * Time.deltaTime;
             }
-            if(Input.GetKey(KeyCode.Q))
+            if (Input.GetKey(KeyCode.Q))
             {
-                RotateLeft();
+                targetAngle -= rotationSpeed * Time.deltaTime;
             }
+
+            // Clamp the targetAngle to the specified limits
+            targetAngle = Mathf.Clamp(targetAngle, calculatedMinMaxAngles.y, calculatedMinMaxAngles.x);
+
+            // Smoothly rotate towards the targetAngle
+            currentAngle = Mathf.Lerp(currentAngle, targetAngle, rotationSpeed * Time.deltaTime);
+            transform.localRotation = Quaternion.Euler(0f, currentAngle, 0f);
         }
     }
-     void RotateRight()
-    {
-        currentAngle += rotationSpeed * Time.deltaTime;
-        currentAngle = Mathf.Clamp(currentAngle, minMaxAngle.y, minMaxAngle.x);
-        transform.localRotation = Quaternion.Euler(0f, currentAngle, 0f);
-    }
 
-    void RotateLeft()
+    public void SetAsActiveRotatable(bool toggle)
     {
-        currentAngle -= rotationSpeed * Time.deltaTime;
-        currentAngle = Mathf.Clamp(currentAngle, minMaxAngle.y, minMaxAngle.x);
-        transform.localRotation = Quaternion.Euler(0f, currentAngle, 0f);
+        active = toggle;
     }
 }
