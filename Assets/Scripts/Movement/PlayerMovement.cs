@@ -1,21 +1,36 @@
-using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
-using Cinemachine;
 
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement Settings")]
-    [SerializeField] float moveSpeed = 7f;
+    float moveSpeed = 7f;
+    Vector3 moveDir;
+
+    [SerializeField] float walkSpeed = 7f;
+    [SerializeField] float runSpeed = 10f;
+
+    [SerializeField] float maxSlopeAngle = 40f;
+    RaycastHit slopeHit;
+
     [SerializeField] float groundDrag = 5f;
+
+    public MovementState state;
+    public enum MovementState
+    {
+        walking,
+        sprinting,
+        air
+    }
 
     [Header("Jump Settings")]
     [SerializeField] float jumpForce = 10f;
     [SerializeField] float jumpCoolDown = 0.2f;
     [SerializeField] float airMultiplier = 0.5f;
+    bool canJump = true;
 
     [Header("Misc Settings")]
     [SerializeField] float rotationSpeed = 7f;
-    bool canJump = true;
+    
 
     [Header("Ground Check")]
     [SerializeField] float groundOffset = 2f;
@@ -25,17 +40,16 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Key Bindings")]
     [SerializeField] KeyCode jumpKey = KeyCode.Space;
+    [SerializeField] KeyCode sprintKey = KeyCode.LeftShift;
 
     [Header("References")]
     [SerializeField] GameObject cam;
+    Rigidbody rb;
     
     float horizInput;
     float verticalInput;
 
-    Vector3 moveDir;
-
-    Rigidbody rb;
-    
+   
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -50,6 +64,7 @@ public class PlayerMovement : MonoBehaviour
         GetInput();
         SpeedControl();
         RotatePlayer();
+        StateHandler();
 
         rb.drag = isGrounded ? groundDrag : 0;
     }
@@ -70,6 +85,25 @@ public class PlayerMovement : MonoBehaviour
             Invoke(nameof(ResetJump), jumpCoolDown);
         }
     }
+    void StateHandler()
+    {
+        if(isGrounded && Input.GetKey(sprintKey))
+        {
+            state = MovementState.sprinting;
+            moveSpeed = runSpeed;
+        }
+
+        else if(isGrounded)
+        {
+            state = MovementState.walking;
+            moveSpeed = walkSpeed;
+        }
+
+        else 
+        {
+            state = MovementState.air;
+        }
+    }
     void MovePlayer()
     {
         Vector3 inputDir = new Vector3(horizInput, 0, verticalInput);
@@ -84,11 +118,21 @@ public class PlayerMovement : MonoBehaviour
 
         moveDir = inputDir.z * camForward + inputDir.x * camRight;
 
+        rb.useGravity = !OnSlope();
+
+        if(OnSlope())
+        {
+            rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 5, ForceMode.Force);
+            return;
+        }
+
         if(isGrounded)
             rb.AddForce(moveDir.normalized * moveSpeed * 10f, ForceMode.Force);
 
         else if(!isGrounded)
             rb.AddForce(moveDir.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
+
+        
     }
     void Jump()
     {
@@ -102,13 +146,23 @@ public class PlayerMovement : MonoBehaviour
     }
     void SpeedControl()
     {
-        Vector3 flatVel = rb.velocity;
-        flatVel.y = 0;
-
-        if(flatVel.magnitude > moveSpeed)
+        if(OnSlope())
         {
-            Vector3 limitedVel = flatVel.normalized * moveSpeed;
-            rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
+            if(rb.velocity.magnitude > moveSpeed)
+            {
+                rb.velocity = rb.velocity.normalized * moveSpeed;
+            }
+        }
+        else
+        {
+            Vector3 flatVel = rb.velocity;
+            flatVel.y = 0;
+
+            if(flatVel.magnitude > moveSpeed)
+            {
+                Vector3 limitedVel = flatVel.normalized * moveSpeed;
+                rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
+            }
         }
     }
     bool GroundCheck()
@@ -121,6 +175,20 @@ public class PlayerMovement : MonoBehaviour
     {
         if(moveDir != Vector3.zero)
             transform.forward = Vector3.Slerp(transform.forward, moveDir.normalized, Time.deltaTime * rotationSpeed);
+    }
+    bool OnSlope()
+    {
+        if(!isGrounded) return false;
+        if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, 4f))
+        {
+            float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
+            return angle < maxSlopeAngle && angle != 0;
+        }
+        return false;
+    }
+    Vector3 GetSlopeMoveDirection()
+    {
+        return Vector3.ProjectOnPlane(moveDir, slopeHit.normal);
     }
     void OnDrawGizmosSelected()
     {
