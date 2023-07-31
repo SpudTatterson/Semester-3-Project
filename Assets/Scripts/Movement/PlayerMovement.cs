@@ -46,6 +46,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] GameObject cam;
     Rigidbody rb;
     
+    [Header("Inputs")]
     float horizInput;
     float verticalInput;
 
