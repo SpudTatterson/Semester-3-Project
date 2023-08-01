@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] float walkSpeed = 7f;
     [SerializeField] float runSpeed = 10f;
+    [SerializeField] float wallRunSpeed = 9f;
 
     [SerializeField] float maxSlopeAngle = 40f;
     RaycastHit slopeHit;
@@ -19,8 +20,11 @@ public class PlayerMovement : MonoBehaviour
     {
         walking,
         sprinting,
+        WallRunning,
         air
     }
+
+    public bool wallRunning;
 
     [Header("Jump Settings")]
     [SerializeField] float jumpForce = 10f;
@@ -45,6 +49,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("References")]
     [SerializeField] GameObject cam;
     Rigidbody rb;
+    [SerializeField] Transform orientation;
     
     [Header("Inputs")]
     float horizInput;
@@ -60,6 +65,8 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        orientation.transform.forward = GiveMoveDir();
+
         isGrounded = GroundCheck();
 
         GetInput();
@@ -88,6 +95,12 @@ public class PlayerMovement : MonoBehaviour
     }
     void StateHandler()
     {
+        if(wallRunning)
+        {
+            state = MovementState.WallRunning;
+            moveSpeed = wallRunSpeed;
+        }
+
         if(isGrounded && Input.GetKey(sprintKey))
         {
             state = MovementState.sprinting;
@@ -190,6 +203,14 @@ public class PlayerMovement : MonoBehaviour
     Vector3 GetSlopeMoveDirection()
     {
         return Vector3.ProjectOnPlane(moveDir, slopeHit.normal);
+    }
+    public Vector3 GiveMoveDir()
+    {
+        return moveDir;
+    }
+    public bool GiveGrounded()
+    {
+        return isGrounded;
     }
     void OnDrawGizmosSelected()
     {
