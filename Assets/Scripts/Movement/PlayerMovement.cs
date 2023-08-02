@@ -150,7 +150,7 @@ public class PlayerMovement : MonoBehaviour
     }
     void Jump()
     {
-        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        rb.velocity = VectorUtility.FlattenVector(rb.velocity);
         
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }
@@ -169,8 +169,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            Vector3 flatVel = rb.velocity;
-            flatVel.y = 0;
+            Vector3 flatVel = VectorUtility.FlattenVector(rb.velocity);
 
             if(flatVel.magnitude > moveSpeed)
             {

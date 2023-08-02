@@ -7,11 +7,20 @@ public class WallRunning : MonoBehaviour
     [SerializeField] LayerMask Ground;
     [SerializeField] float wallRunForce = 7f;
     [SerializeField] float maxWallRunTime = 3f;
+    [SerializeField] float wallJumpUpForce = 5f;
+    [SerializeField] float wallJumpSideForce = 10f;
+
     float wallRunTimer;
 
     [Header("Input")]
+    [SerializeField] KeyCode jumpKey = KeyCode.Space;
     float horizInput;
     float verticalInput;
+
+    [Header("Exiting")]
+    bool exitingWall;
+    [SerializeField] float exitWallTime = .5f;
+    float exitWallTimer;
 
     [Header("Detection")]
     [SerializeField] float wallCheckDistance = 0.4f;
@@ -26,6 +35,8 @@ public class WallRunning : MonoBehaviour
     Rigidbody rb;
     [SerializeField] Transform orientation;
 
+    Vector3 forceToApply;
+
 
     void Awake()
     {
@@ -37,13 +48,14 @@ public class WallRunning : MonoBehaviour
     {
         CheckForWall();
         StateMachine();
+
+        Debug.DrawRay(transform.position, forceToApply);
     }
     void FixedUpdate()
     {
         if(pm.wallRunning)
         {
             WallRunningMovement();
-            Debug.Log("wall running");
         }
     }
     void CheckForWall()
@@ -52,7 +64,6 @@ public class WallRunning : MonoBehaviour
         Walls, QueryTriggerInteraction.Ignore);
         wallLeft = Physics.Raycast(transform.position + transform.up, -orientation.right,out wallLeftHit, wallCheckDistance, 
         Walls, QueryTriggerInteraction.Ignore);
-        Debug.DrawRay(transform.position + transform.up, orientation.right);
     }
     bool AboveGround()
     {
@@ -63,12 +74,22 @@ public class WallRunning : MonoBehaviour
     {
         GetInput();
 
-        Debug.Log(wallLeft + " " + wallRight);
-
         //WallRunning
-        if((wallLeft || wallRight) && verticalInput > 0 && AboveGround())
+        if((wallLeft || wallRight) && verticalInput > 0 && AboveGround() && !exitingWall)
         {
             if(!pm.wallRunning)  StartWallRun();
+
+            if(Input.GetKeyDown(jumpKey)) WallJump();
+        }
+
+        else if(exitingWall)
+        {
+            if(pm.wallRunning) StopWallRun();
+
+            if(exitWallTimer > 0) exitWallTimer -= Time.deltaTime;
+                
+            if(exitWallTimer <= 0)  exitingWall = false;
+
         }
 
         else 
@@ -95,7 +116,7 @@ public class WallRunning : MonoBehaviour
     void WallRunningMovement()
     {
         rb.useGravity = false;
-        rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+        rb.velocity = VectorUtility.FlattenVector(rb.velocity);
 
         Vector3 wallNormal = wallRight ? wallRightHit.normal : wallLeftHit.normal;
 
@@ -105,5 +126,21 @@ public class WallRunning : MonoBehaviour
             wallForward = -wallForward;
 
         rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
+    }
+
+    void WallJump()
+    {
+        Debug.Log("wall jumped");
+        exitingWall = true;
+        exitWallTimer = exitWallTime;
+
+        Vector3 wallNormal = wallRight ? wallRightHit.normal : wallLeftHit.normal;
+
+        forceToApply = transform.up * wallJumpUpForce + wallNormal * wallJumpSideForce;
+
+        Debug.DrawRay(transform.position, forceToApply);
+        rb.velocity = VectorUtility.FlattenVector(rb.velocity);
+
+        rb.AddForce(forceToApply, ForceMode.Force);
     }
 }
