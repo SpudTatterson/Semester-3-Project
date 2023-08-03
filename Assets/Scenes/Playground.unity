@@ -237,9 +237,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a44e32a80ef6184459f586e707a854db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reflectiveLayer:
-    serializedVersion: 2
-    m_Bits: 65
+  lightObject: {fileID: 0}
+  initialBeamShootPoint: {fileID: 0}
   reflectiveTag: Reflective
   lightBeamMaxDistance: 100
   receiveBeamEvents:
@@ -247,6 +246,7 @@ MonoBehaviour:
       m_Calls: []
   shootBeam: 1
   initialBeam: 0
+  distance: 0
 --- !u!120 &268015425
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -522,9 +522,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a44e32a80ef6184459f586e707a854db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reflectiveLayer:
-    serializedVersion: 2
-    m_Bits: 65
+  lightObject: {fileID: 0}
+  initialBeamShootPoint: {fileID: 0}
   reflectiveTag: Reflective
   lightBeamMaxDistance: 100
   receiveBeamEvents:
@@ -532,6 +531,7 @@ MonoBehaviour:
       m_Calls: []
   shootBeam: 1
   initialBeam: 0
+  distance: 0
 --- !u!120 &546299891
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -1531,9 +1531,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a44e32a80ef6184459f586e707a854db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reflectiveLayer:
-    serializedVersion: 2
-    m_Bits: 65
+  lightObject: {fileID: 0}
+  initialBeamShootPoint: {fileID: 0}
   reflectiveTag: Reflective
   lightBeamMaxDistance: 100
   receiveBeamEvents:
@@ -1541,6 +1540,7 @@ MonoBehaviour:
       m_Calls: []
   shootBeam: 1
   initialBeam: 1
+  distance: 0
 --- !u!114 &1298104641
 MonoBehaviour:
   m_ObjectHideFlags: 0
