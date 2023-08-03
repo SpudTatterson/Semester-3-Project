@@ -1,0 +1,3 @@
+[submodule "Assets/Scripts/UtilSubModule"]
+	path = Assets/Scripts/UtilSubModule
+	url = https://github.com/SpudTatterson/Unity-Assets.git
