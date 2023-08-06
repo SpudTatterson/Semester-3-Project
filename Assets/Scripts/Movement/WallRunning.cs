@@ -10,6 +10,7 @@ public class WallRunning : MonoBehaviour
     [SerializeField] float wallJumpUpForce = 5f;
     [SerializeField] float wallJumpSideForce = 10f;
 
+    [SerializeField] float wallRunTime;
     float wallRunTimer;
 
     [Header("Input")]
@@ -33,6 +34,7 @@ public class WallRunning : MonoBehaviour
     [Header("References")]
     PlayerMovement pm;
     Rigidbody rb;
+    Animator animator;
     [SerializeField] Transform orientation;
 
     Vector3 forceToApply;
@@ -42,6 +44,7 @@ public class WallRunning : MonoBehaviour
     {
         pm = GetComponent<PlayerMovement>();
         rb = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -107,10 +110,12 @@ public class WallRunning : MonoBehaviour
     void StartWallRun()
     {
         pm.wallRunning = true;
+        animator.SetBool("StartedWallRunning", true);
     }
     void StopWallRun()
     {
         pm.wallRunning = false;
+        animator.SetBool("StartedWallRunning", false);
     }
 
     void WallRunningMovement()

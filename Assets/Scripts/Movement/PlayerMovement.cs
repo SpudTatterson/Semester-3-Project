@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -50,15 +51,18 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] GameObject cam;
     Rigidbody rb;
     [SerializeField] Transform orientation;
+    [SerializeField] Animator animator;
     
     [Header("Inputs")]
     float horizInput;
     float verticalInput;
 
+
    
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
         rb.freezeRotation = true;
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -68,6 +72,8 @@ public class PlayerMovement : MonoBehaviour
         orientation.transform.forward = GiveMoveDir();
 
         isGrounded = GroundCheck();
+
+        
 
         GetInput();
         SpeedControl();
@@ -95,14 +101,20 @@ public class PlayerMovement : MonoBehaviour
     }
     void StateHandler()
     {
+        
+        animator.SetBool("Grounded", isGrounded);
+        animator.SetBool("WallRunning", wallRunning);
+        
         if(wallRunning)
         {
             state = MovementState.WallRunning;
+            
             moveSpeed = wallRunSpeed;
         }
-
+        
         if(isGrounded && Input.GetKey(sprintKey))
         {
+            animator.SetFloat("Speed", rb.velocity.magnitude);
             state = MovementState.sprinting;
             moveSpeed = runSpeed;
         }
@@ -110,6 +122,8 @@ public class PlayerMovement : MonoBehaviour
         else if(isGrounded)
         {
             state = MovementState.walking;
+
+            animator.SetFloat("Speed", rb.velocity.magnitude);
             moveSpeed = walkSpeed;
         }
 
@@ -151,12 +165,15 @@ public class PlayerMovement : MonoBehaviour
     void Jump()
     {
         rb.velocity = VectorUtility.FlattenVector(rb.velocity);
-        
+        animator.SetBool("Jump",!canJump);
+        //myanim.SetBool("Grounded", GroundCheck());
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }
     void ResetJump()
     {
         canJump = true;
+        animator.SetBool("Jump",!canJump);
+        //myanim.SetBool("Grounded", GroundCheck());
     }
     void SpeedControl()
     {
@@ -182,6 +199,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y + groundOffset,
         transform.position.z);
+        
         return Physics.CheckSphere(spherePosition, groundedRadius, whatIsGround, QueryTriggerInteraction.Ignore);
     }
     void RotatePlayer()
