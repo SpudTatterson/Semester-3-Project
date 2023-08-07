@@ -10,6 +10,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float walkSpeed = 7f;
     [SerializeField] float runSpeed = 10f;
     [SerializeField] float wallRunSpeed = 9f;
+    [SerializeField] float swingSpeed = 15f;
 
     [SerializeField] float maxSlopeAngle = 40f;
     RaycastHit slopeHit;
@@ -22,10 +23,12 @@ public class PlayerMovement : MonoBehaviour
         walking,
         sprinting,
         WallRunning,
+        Swinging,
         air
     }
 
     public bool wallRunning;
+    public bool swinging;
 
     [Header("Jump Settings")]
     [SerializeField] float jumpForce = 10f;
@@ -104,14 +107,21 @@ public class PlayerMovement : MonoBehaviour
         
         animator.SetBool("Grounded", isGrounded);
         animator.SetBool("WallRunning", wallRunning);
-        
+
         if(wallRunning)
         {
             state = MovementState.WallRunning;
             
             moveSpeed = wallRunSpeed;
         }
-        
+
+        if(swinging)
+        {
+            state = MovementState.Swinging;
+
+            moveSpeed = swingSpeed;
+        }
+
         if(isGrounded && Input.GetKey(sprintKey))
         {
             animator.SetFloat("Speed", rb.velocity.magnitude);
@@ -134,6 +144,9 @@ public class PlayerMovement : MonoBehaviour
     }
     void MovePlayer()
     {
+        if(swinging) return;
+
+        
         Vector3 inputDir = new Vector3(horizInput, 0, verticalInput);
 
         Vector3 camForward = cam.transform.forward;
