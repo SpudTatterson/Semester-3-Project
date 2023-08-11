@@ -1,3 +1,4 @@
+using System.Transactions;
 using UnityEngine;
 
 public class GrapplingGun : MonoBehaviour
@@ -5,9 +6,10 @@ public class GrapplingGun : MonoBehaviour
     [SerializeField] LayerMask grappleable;
     [SerializeField] Transform projectileSpawnPoint;
     [SerializeField] float maxDistance = 100f;
-    [SerializeField] float swingForce = 10f;
     [SerializeField] float releaseDistance = 2f;
     [SerializeField] float aimAssistRadius = 2f;
+    [SerializeField] float forwardThrustForce = 40f;
+    [SerializeField] float SideThrustForce = 20f;
 
     LineRenderer lr;
     Vector3 grapplePoint;
@@ -19,6 +21,11 @@ public class GrapplingGun : MonoBehaviour
     PlayerMovement pm;
     SpringJoint joint;
     Rigidbody rb;
+    Animator animator;
+    [SerializeField] Transform orientation;
+
+    float horizInput;
+    float verticalInput;
 
     void Start()
     {
@@ -26,6 +33,7 @@ public class GrapplingGun : MonoBehaviour
         cam = Camera.main;
         rb = GetComponentInParent<Rigidbody>();
         pm = GetComponentInParent<PlayerMovement>();
+        animator = GetComponentInParent<Animator>();
         //characterController = GetComponentInParent<CharacterController>();
         //player = GetComponentInParent<ThirdPersonController>();
     }
@@ -47,6 +55,10 @@ public class GrapplingGun : MonoBehaviour
             //if (Vector3.Distance(transform.position, grapplePoint) <= releaseDistance)
                 //StopGrapple();
         }
+    }
+    void FixedUpdate()
+    {
+        if(joint != null) SwingMovement();
     }
 
     Vector3 CheckForSwingPoint()
@@ -73,6 +85,7 @@ public class GrapplingGun : MonoBehaviour
 
     void StartGrapple()
     {
+        animator.SetBool("StartedSwinging", true);
         grapplePoint = CheckForSwingPoint();
         if(grapplePoint != Vector3.zero)
         {
@@ -85,8 +98,6 @@ public class GrapplingGun : MonoBehaviour
 
             isGrappling = true;
         }
-
-
     }
 
     private void ConfigureJoint()
@@ -107,6 +118,19 @@ public class GrapplingGun : MonoBehaviour
         joint.massScale = 4.5f;
     }
 
+    void SwingMovement()
+    {
+        GetInput();
+
+        rb.AddForce(orientation.right * horizInput * SideThrustForce * 10 * Time.deltaTime, ForceMode.Force);
+        rb.AddForce(orientation.forward * verticalInput * forwardThrustForce * 10 * Time.deltaTime, ForceMode.Force);
+    }
+
+    void GetInput()
+    {
+        horizInput = Input.GetAxisRaw("Horizontal");
+        verticalInput = Input.GetAxisRaw("Vertical");
+    }
     // void StartGrapple()
     // {
     //     rb.useGravity = true;
@@ -171,6 +195,8 @@ public class GrapplingGun : MonoBehaviour
 
     void StopGrapple()
     {
+        animator.SetBool("StartedSwinging", false);
+        animator.SetTrigger("StopSwinging");
         pm.swinging = false;
         isGrappling = false;    
         Destroy(joint);

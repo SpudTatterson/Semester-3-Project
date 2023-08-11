@@ -16,6 +16,7 @@ public class PlayerMovement : MonoBehaviour
     RaycastHit slopeHit;
 
     [SerializeField] float groundDrag = 5f;
+    [SerializeField] float airDrag = 0.1f;
 
     public MovementState state;
     public enum MovementState
@@ -83,7 +84,7 @@ public class PlayerMovement : MonoBehaviour
         RotatePlayer();
         StateHandler();
 
-        rb.drag = isGrounded ? groundDrag : 0;
+        rb.drag = isGrounded ? groundDrag : airDrag;
     }
 
     void FixedUpdate()
@@ -108,20 +109,6 @@ public class PlayerMovement : MonoBehaviour
         animator.SetBool("Grounded", isGrounded);
         animator.SetBool("WallRunning", wallRunning);
 
-        if(wallRunning)
-        {
-            state = MovementState.WallRunning;
-            
-            moveSpeed = wallRunSpeed;
-        }
-
-        if(swinging)
-        {
-            state = MovementState.Swinging;
-
-            moveSpeed = swingSpeed;
-        }
-
         if(isGrounded && Input.GetKey(sprintKey))
         {
             animator.SetFloat("Speed", rb.velocity.magnitude);
@@ -141,12 +128,25 @@ public class PlayerMovement : MonoBehaviour
         {
             state = MovementState.air;
         }
+
+        if(wallRunning)
+        {
+            state = MovementState.WallRunning;
+            
+            moveSpeed = wallRunSpeed;
+        }
+
+        if(swinging && !isGrounded)
+        {
+            state = MovementState.Swinging;
+
+            
+
+            moveSpeed = swingSpeed;
+        }
     }
     void MovePlayer()
     {
-        if(swinging) return;
-
-        
         Vector3 inputDir = new Vector3(horizInput, 0, verticalInput);
 
         Vector3 camForward = cam.transform.forward;
@@ -158,6 +158,8 @@ public class PlayerMovement : MonoBehaviour
         camRight.Normalize();
 
         moveDir = inputDir.z * camForward + inputDir.x * camRight;
+
+        if(swinging && !isGrounded) return;
 
         rb.useGravity = !OnSlope();
 
