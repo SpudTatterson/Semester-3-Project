@@ -30,9 +30,19 @@ public class Interactor : MonoBehaviour
     {
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        if(Physics.Raycast(ray,out hit, maxInteractionDistance))
+        if(Physics.Raycast(ray,out hit))
         {
-            if(hit.collider.gameObject.layer != 6) return;
+            if(hit.collider.gameObject.layer != 6) 
+            {
+                managers.uiManager.interactText.gameObject.SetActive(false);
+                return;
+            }
+            float distance = Vector3.Distance(transform.position, hit.point);
+            if(distance > maxInteractionDistance) 
+            {
+                managers.uiManager.interactText.gameObject.SetActive(false);
+                return;
+            }
             managers.uiManager.interactText.gameObject.SetActive(true);
             if(Input.GetKeyDown(interactKey))
             {
