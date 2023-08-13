@@ -73,11 +73,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        orientation.transform.forward = GiveMoveDir();
-
         isGrounded = GroundCheck();
-
-        
 
         GetInput();
         SpeedControl();
@@ -140,7 +136,7 @@ public class PlayerMovement : MonoBehaviour
         {
             state = MovementState.Swinging;
 
-            
+            rb.useGravity = true;
 
             moveSpeed = swingSpeed;
         }
@@ -158,6 +154,8 @@ public class PlayerMovement : MonoBehaviour
         camRight.Normalize();
 
         moveDir = inputDir.z * camForward + inputDir.x * camRight;
+        orientation.transform.forward = moveDir;
+        Debug.DrawRay(transform.position + transform.up * 1, moveDir);
 
         if(swinging && !isGrounded) return;
 

@@ -1,4 +1,3 @@
-using System.Transactions;
 using UnityEngine;
 
 public class GrapplingGun : MonoBehaviour
@@ -8,8 +7,9 @@ public class GrapplingGun : MonoBehaviour
     [SerializeField] float maxDistance = 100f;
     [SerializeField] float releaseDistance = 2f;
     [SerializeField] float aimAssistRadius = 2f;
-    [SerializeField] float forwardThrustForce = 40f;
-    [SerializeField] float SideThrustForce = 20f;
+    [SerializeField] float ThrustForce = 10f;
+    [SerializeField] float playerDetectionRadius = 2f;
+    [SerializeField] LayerMask playerLayer;
 
     LineRenderer lr;
     Vector3 grapplePoint;
@@ -85,11 +85,11 @@ public class GrapplingGun : MonoBehaviour
 
     void StartGrapple()
     {
-        animator.SetBool("StartedSwinging", true);
+        
         grapplePoint = CheckForSwingPoint();
         if(grapplePoint != Vector3.zero)
         {
-            rb.useGravity = true;
+            animator.SetBool("StartedSwinging", true);
             lr.enabled = true;
             pm.swinging = true;
 
@@ -99,15 +99,18 @@ public class GrapplingGun : MonoBehaviour
             isGrappling = true;
         }
     }
-
-    private void ConfigureJoint()
+    float GetSpeedModifier()
+    {
+        float speed = rb.velocity.magnitude;
+        float speedModifier = Mathf.InverseLerp(0, 14, speed);
+        return speedModifier;
+    }
+    void ConfigureJoint()
     {
         joint.autoConfigureConnectedAnchor = false;
         joint.connectedAnchor = grapplePoint;
 
         float distanceFromPoint = Vector3.Distance(pm.transform.position, grapplePoint);
-
-        Debug.Log(distanceFromPoint);
 
         // the distance grapple will try to keep from grapple point. 
         joint.maxDistance = distanceFromPoint * 0.8f;
@@ -120,16 +123,20 @@ public class GrapplingGun : MonoBehaviour
 
     void SwingMovement()
     {
-        GetInput();
+        //if(!IsPlayerUnderGrapplePoint()) return;
 
-        rb.AddForce(orientation.right * horizInput * SideThrustForce * 10 * Time.deltaTime, ForceMode.Force);
-        rb.AddForce(orientation.forward * verticalInput * forwardThrustForce * 10 * Time.deltaTime, ForceMode.Force);
+        float speedModifier = GetSpeedModifier();
+        Vector3 moveDir = pm.GiveMoveDir();
+
+        rb.AddForce(moveDir * ThrustForce * 10 * Time.deltaTime);
+        //rb.AddForce(orientation.forward * forwardThrustForce * 10 * Time.deltaTime, ForceMode.Acceleration);
+        Debug.DrawRay(transform.position, orientation.forward);
     }
 
-    void GetInput()
+    bool IsPlayerUnderGrapplePoint()
     {
-        horizInput = Input.GetAxisRaw("Horizontal");
-        verticalInput = Input.GetAxisRaw("Vertical");
+        Ray ray = new Ray(grapplePoint, Vector3.down);
+        return Physics.SphereCast(ray, playerDetectionRadius, maxDistance, playerLayer);
     }
     // void StartGrapple()
     // {
