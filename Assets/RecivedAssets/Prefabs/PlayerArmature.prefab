@@ -93,7 +93,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 826574638}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -202,9 +202,14 @@ MonoBehaviour:
     m_Bits: 1
   projectileSpawnPoint: {fileID: 2135985962}
   maxDistance: 40
-  swingForce: 10
   releaseDistance: 2
   aimAssistRadius: 2
+  ThrustForce: 10
+  playerDetectionRadius: 2
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  orientation: {fileID: 0}
 --- !u!1 &1142918380
 GameObject:
   m_ObjectHideFlags: 0
@@ -1417,7 +1422,7 @@ MonoBehaviour:
   swingSpeed: 15
   maxSlopeAngle: 40
   groundDrag: 5
-  airDrag: 0.1
+  airDrag: 0.05
   state: 0
   wallRunning: 0
   swinging: 0
@@ -1442,7 +1447,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4416926081852918481}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 73f3daf3a44973049a99a0388ea225f9, type: 3}
   m_Name: 
