@@ -34,13 +34,13 @@ public class Interactor : MonoBehaviour
         {
             if(hit.collider.gameObject.layer != 6) 
             {
-                managers.uiManager.interactText.gameObject.SetActive(false);
+                StopInteract();
                 return;
             }
             float distance = Vector3.Distance(transform.position, hit.point);
             if(distance > maxInteractionDistance) 
             {
-                managers.uiManager.interactText.gameObject.SetActive(false);
+                StopInteract();
                 return;
             }
             managers.uiManager.interactText.gameObject.SetActive(true);
@@ -54,13 +54,18 @@ public class Interactor : MonoBehaviour
         }
         else
         {
-            managers.uiManager.interactText.gameObject.SetActive(false); 
-            if(interacted)
-            {
-                lastInteractedObject.StopInteract(); 
-                interacted = false;
-            }
-                  
+            StopInteract();
+
+        }
+    }
+
+    private void StopInteract()
+    {
+        managers.uiManager.interactText.gameObject.SetActive(false);
+        if (interacted)
+        {
+            lastInteractedObject.StopInteract();
+            interacted = false;
         }
     }
 }
