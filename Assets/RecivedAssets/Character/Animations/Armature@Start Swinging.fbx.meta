@@ -65,7 +65,7 @@ ModelImporter:
       name: Start Swinging (1)
       takeName: mixamo.com
       internalID: -199644881004303418
-      firstFrame: 0
+      firstFrame: 10
       lastFrame: 31
       wrapMode: 0
       orientationOffsetY: 0
