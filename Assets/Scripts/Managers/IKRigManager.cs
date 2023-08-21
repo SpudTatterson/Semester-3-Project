@@ -15,13 +15,20 @@ public class IKRigManager : MonoBehaviour
 
     void Start()
     {
-        headAimRig.weight = 0;
+        headAimRig.weight = 1;
         leftHandRig.weight = 0;
         rightHandRig.weight = 0;
         leftLegRig.weight = 0;
         rightLegRig.weight = 0;
         spineRig.weight = 0;
         hipRig.weight = 0;
+    }
+
+    public void SwitchHeadAimRigSource()
+    {
+        headAimRig.data.sourceObjects.SetWeight(0, 0f);
+        headAimRig.data.sourceObjects.SetWeight(1, 1f);
+        Debug.Log(headAimRig.data.sourceObjects.GetWeight(0));
     }
     public static IEnumerator SetRigWeight(TwoBoneIKConstraint rig, float targetWeight, float lerpTime)
     {

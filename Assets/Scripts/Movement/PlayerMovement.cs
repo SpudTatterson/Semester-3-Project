@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
@@ -56,6 +57,8 @@ public class PlayerMovement : MonoBehaviour
     Rigidbody rb;
     [SerializeField] Transform orientation;
     [SerializeField] Animator animator;
+    [SerializeField] Transform headConstraint;
+    ManagersManager managers;
     
     [Header("Inputs")]
     float horizInput;
@@ -67,6 +70,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
+        managers = FindObjectOfType<ManagersManager>();
         rb.freezeRotation = true;
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -78,6 +82,7 @@ public class PlayerMovement : MonoBehaviour
         GetInput();
         SpeedControl();
         RotatePlayer();
+        MoveHead();
         StateHandler();
 
         rb.drag = isGrounded ? groundDrag : airDrag;
@@ -141,6 +146,21 @@ public class PlayerMovement : MonoBehaviour
             moveSpeed = swingSpeed;
         }
     }
+    void MoveHead()
+    {  
+        Ray ray = cam.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        Physics.Raycast(ray,out hit, Mathf.Infinity, whatIsGround);
+        Vector3 flatHitPoint = VectorUtility.FlattenVector(hit.point, transform.position.y);
+        Vector3 hitPointDirection = flatHitPoint - transform.position;
+        float angle = Vector3.Angle(transform.forward, hitPointDirection);
+        if(angle < 150)  headConstraint.position = flatHitPoint;
+        else 
+        {
+            managers.iKRigManager.SwitchHeadAimRigSource();
+        }
+       
+    }
     void MovePlayer()
     {
         Vector3 inputDir = new Vector3(horizInput, 0, verticalInput);
@@ -154,7 +174,9 @@ public class PlayerMovement : MonoBehaviour
         camRight.Normalize();
 
         moveDir = inputDir.z * camForward + inputDir.x * camRight;
-        orientation.transform.forward = moveDir;
+
+        if(moveDir != Vector3.zero) orientation.transform.forward = moveDir;
+
         Debug.DrawRay(transform.position + transform.up * 1, moveDir);
 
         if(swinging && !isGrounded) return;
@@ -179,14 +201,12 @@ public class PlayerMovement : MonoBehaviour
     {
         rb.velocity = VectorUtility.FlattenVector(rb.velocity);
         animator.SetBool("Jump",!canJump);
-        //myanim.SetBool("Grounded", GroundCheck());
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }
     void ResetJump()
     {
         canJump = true;
         animator.SetBool("Jump",!canJump);
-        //myanim.SetBool("Grounded", GroundCheck());
     }
     void SpeedControl()
     {
