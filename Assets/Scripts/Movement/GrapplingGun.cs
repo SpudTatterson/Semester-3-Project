@@ -10,6 +10,7 @@ public class GrapplingGun : MonoBehaviour
     [SerializeField] float ThrustForce = 10f;
     [SerializeField] float playerDetectionRadius = 2f;
     [SerializeField] LayerMask playerLayer;
+    [SerializeField] Transform HandTarget;
 
     LineRenderer lr;
     Vector3 grapplePoint;
@@ -22,6 +23,7 @@ public class GrapplingGun : MonoBehaviour
     SpringJoint joint;
     Rigidbody rb;
     Animator animator;
+    ManagersManager managers;
     [SerializeField] Transform orientation;
 
     float horizInput;
@@ -29,6 +31,7 @@ public class GrapplingGun : MonoBehaviour
 
     void Start()
     {
+        managers = FindObjectOfType<ManagersManager>();
         lr = GetComponent<LineRenderer>();
         cam = Camera.main;
         rb = GetComponentInParent<Rigidbody>();
@@ -51,6 +54,7 @@ public class GrapplingGun : MonoBehaviour
         if (isGrappling)
         {
             SetLineRendererPositions(grapplePoint);
+            HandTarget.position = grapplePoint;
             //UpdateSwingPosition();
             //if (Vector3.Distance(transform.position, grapplePoint) <= releaseDistance)
                 //StopGrapple();
@@ -84,11 +88,12 @@ public class GrapplingGun : MonoBehaviour
     }
 
     void StartGrapple()
-    {
-        
+    {   
         grapplePoint = CheckForSwingPoint();
         if(grapplePoint != Vector3.zero)
         {
+            HandTarget.position = grapplePoint;
+            StartCoroutine(IKRigManager.SetRigWeight(managers.iKRigManager.rightHandRig, 1, 1f));
             animator.SetBool("StartedSwinging", true);
             lr.enabled = true;
             pm.swinging = true;
@@ -202,6 +207,7 @@ public class GrapplingGun : MonoBehaviour
 
     void StopGrapple()
     {
+        StartCoroutine(IKRigManager.SetRigWeight(managers.iKRigManager.rightHandRig, 0, 1f));
         animator.SetBool("StartedSwinging", false);
         animator.SetTrigger("StopSwinging");
         pm.swinging = false;
