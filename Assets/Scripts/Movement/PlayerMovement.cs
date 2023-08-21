@@ -56,7 +56,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] GameObject cam;
     Rigidbody rb;
     [SerializeField] Transform orientation;
-    [SerializeField] Animator animator;
+    Animator animator;
     [SerializeField] Transform headConstraint;
     ManagersManager managers;
     
