@@ -40,7 +40,7 @@ public class Rotatable : MonoBehaviour
 
             // Smoothly rotate towards the targetAngle
             currentAngle = Mathf.Lerp(currentAngle, targetAngle, rotationSpeed * Time.deltaTime);
-            transform.localRotation = Quaternion.Euler(0f, currentAngle, 0f);
+            transform.localRotation = Quaternion.Euler(transform.localEulerAngles.x, currentAngle, transform.localEulerAngles.z);
         }
     }
 
