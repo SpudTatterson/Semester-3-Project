@@ -452,7 +452,7 @@ MonoBehaviour:
   m_Data:
     m_ConstrainedObject: {fileID: 6044159111065775861}
     m_SourceObjects:
-      m_Length: 1
+      m_Length: 2
       m_Item0:
         transform: {fileID: 2050660385}
         weight: 1
