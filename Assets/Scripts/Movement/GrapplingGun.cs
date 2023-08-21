@@ -20,6 +20,8 @@ public class GrapplingGun : MonoBehaviour
     Vector3 swingDirection;
     float swingDistance;
     PlayerMovement pm;
+    GameObject interactableObject;
+    bool interacting = false;
     SpringJoint joint;
     Rigidbody rb;
     Animator animator;
@@ -53,6 +55,10 @@ public class GrapplingGun : MonoBehaviour
         {
             SetLineRendererPositions(grapplePoint);
             HandTarget.position = grapplePoint;
+            if(interacting)
+            {
+                interactableObject.GetComponentInParent<Pullable>().Pull(100, transform.position);
+            }
             //UpdateSwingPosition();
             //if (Vector3.Distance(transform.position, grapplePoint) <= releaseDistance)
                 //StopGrapple();
@@ -74,6 +80,11 @@ public class GrapplingGun : MonoBehaviour
         if (Physics.Raycast(camRay, out rayHit, maxDistance, grappleable))
         {
             SwingPoint = rayHit.point;
+            if(rayHit.collider.gameObject.layer == 6)
+            {
+                interactableObject = rayHit.collider.gameObject;
+                interacting = true;
+            } 
             return SwingPoint;
         }
         if(Physics.SphereCast(camRay, aimAssistRadius,out sphereHit, maxDistance, grappleable))
@@ -96,8 +107,12 @@ public class GrapplingGun : MonoBehaviour
             lr.enabled = true;
             pm.swinging = true;
 
-            joint = rb.gameObject.AddComponent<SpringJoint>();
-            ConfigureJoint();
+            if(!interacting)
+            {
+                joint = rb.gameObject.AddComponent<SpringJoint>();
+                ConfigureJoint();
+            }
+            
 
             isGrappling = true;
         }

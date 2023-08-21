@@ -29,7 +29,13 @@ public class Pullable : MonoBehaviour
         }
 
     }
+    public void Pull(float force, Vector3 pullLocation)
+    {
+        Vector3 direction;
 
+        direction = pullLocation - transform.position;
+        rb.AddForce(direction * force, ForceMode.Force);
+    }
     private void ConstrainMovementToLocalXAxis()
     {
         Vector3 localVelocity = transform.InverseTransformDirection(rb.velocity);
@@ -39,13 +45,6 @@ public class Pullable : MonoBehaviour
         rb.velocity = transform.TransformDirection(localVelocity);
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Player")) 
-        {
-            Debug.Log(collision.contacts[0].normal);
-        }
-    }
     bool ReachedConstraintsCheck()
     {
         float distance = Vector3.Distance(transform.position, startingPosition);
