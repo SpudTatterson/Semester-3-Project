@@ -6,7 +6,7 @@ public class Interactor : MonoBehaviour
 {
     [Header("Settings")]
     [SerializeField] float maxInteractionDistance = 4f;
-    [SerializeField] LayerMask interactableLayer;
+    [SerializeField] LayerMask interactMask;
     [SerializeField] KeyCode interactKey = KeyCode.F;
     
     [Header("References")]
@@ -30,7 +30,7 @@ public class Interactor : MonoBehaviour
     {
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        if(Physics.Raycast(ray,out hit))
+        if(Physics.Raycast(ray,out hit, maxInteractionDistance, interactMask))
         {
             if(hit.collider.gameObject.layer != 6) 
             {
