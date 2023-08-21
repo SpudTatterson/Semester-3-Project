@@ -157,7 +157,7 @@ public class PlayerMovement : MonoBehaviour
         if(angle < 150)  headConstraint.position = flatHitPoint;
         else 
         {
-            managers.iKRigManager.SwitchHeadAimRigSource();
+            managers.ikRig.SwitchHeadAimRigSource();
         }
        
     }

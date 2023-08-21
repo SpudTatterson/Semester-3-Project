@@ -43,7 +43,7 @@ public class Interactor : MonoBehaviour
                 StopInteract();
                 return;
             }
-            managers.uiManager.interactText.gameObject.SetActive(true);
+            managers.UI.interactText.gameObject.SetActive(true);
             if(Input.GetKeyDown(interactKey))
             {
                 lastInteractedObject = hit.collider.gameObject.GetComponentInParent<Interactable>();
@@ -61,7 +61,7 @@ public class Interactor : MonoBehaviour
 
     private void StopInteract()
     {
-        managers.uiManager.interactText.gameObject.SetActive(false);
+        managers.UI.interactText.gameObject.SetActive(false);
         if (interacted)
         {
             lastInteractedObject.StopInteract();

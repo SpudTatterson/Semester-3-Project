@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class ManagersManager : MonoBehaviour
 {
-    public UIManager uiManager;
-    public IKRigManager iKRigManager;
+    public UIManager UI;
+    public IKRigManager ikRig;
 
     void Awake()
     {
-        uiManager = FindObjectOfType<UIManager>();
-        iKRigManager = FindObjectOfType<IKRigManager>();
+        UI = FindObjectOfType<UIManager>();
+        ikRig = FindObjectOfType<IKRigManager>();
     }
 }

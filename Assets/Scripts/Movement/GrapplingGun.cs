@@ -93,7 +93,7 @@ public class GrapplingGun : MonoBehaviour
         if(grapplePoint != Vector3.zero)
         {
             HandTarget.position = grapplePoint;
-            StartCoroutine(IKRigManager.SetRigWeight(managers.iKRigManager.rightHandRig, 1, 1f));
+            StartCoroutine(IKRigManager.SetRigWeight(managers.ikRig.rightHandRig, 1, 1f));
             animator.SetBool("StartedSwinging", true);
             lr.enabled = true;
             pm.swinging = true;
@@ -207,7 +207,7 @@ public class GrapplingGun : MonoBehaviour
 
     void StopGrapple()
     {
-        StartCoroutine(IKRigManager.SetRigWeight(managers.iKRigManager.rightHandRig, 0, 1f));
+        StartCoroutine(IKRigManager.SetRigWeight(managers.ikRig.rightHandRig, 0, 1f));
         animator.SetBool("StartedSwinging", false);
         animator.SetTrigger("StopSwinging");
         pm.swinging = false;
