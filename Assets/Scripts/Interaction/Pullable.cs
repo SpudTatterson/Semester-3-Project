@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Pushable : MonoBehaviour
+public class Pullable : MonoBehaviour
 {
     [SerializeField] float pushForce = 5f;
     [SerializeField] float maxAllowedAngle = 45f;  
