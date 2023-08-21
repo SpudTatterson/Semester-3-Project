@@ -50,8 +50,11 @@ public class LightBeam : MonoBehaviour
     {
         lightObject.range = distance * 1.5f;
         lightObject.transform.position = beamLocation;
-        Quaternion targetRotation = Quaternion.LookRotation(direction, transform.up);
-        lightObject.transform.rotation = targetRotation;
+        if(direction != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction, transform.up);
+            lightObject.transform.rotation = targetRotation;
+        }
         lightObject.enabled = receivedBeam;
     }
     void ReceiveBeam(RaycastHit hit, Vector3 InitialDirection)
