@@ -28,13 +28,11 @@ public class IKRigManager : MonoBehaviour
     {
         headAimRig.data.sourceObjects.SetWeight(0, 0f);
         headAimRig.data.sourceObjects.SetWeight(1, 1f);
-        Debug.Log(headAimRig.data.sourceObjects.GetWeight(0));
     }
     public static IEnumerator SetRigWeight(TwoBoneIKConstraint rig, float targetWeight, float lerpTime)
     {
         float startTime = Time.time;
         float currentWeight = rig.weight;
-        Debug.Log("test");
         while (Time.time - startTime < lerpTime)
         {
             float normalizedTime = (Time.time - startTime) / lerpTime;
