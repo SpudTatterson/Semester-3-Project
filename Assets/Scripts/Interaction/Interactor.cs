@@ -16,6 +16,7 @@ public class Interactor : MonoBehaviour
     //private vars
     Interactable lastInteractedObject;
     bool interacted;
+    const int interactableLayer = 6;
 
     // Start is called before the first frame update
     void Start()
@@ -32,13 +33,12 @@ public class Interactor : MonoBehaviour
         RaycastHit hit;
         if(Physics.Raycast(ray,out hit, maxInteractionDistance, interactMask))
         {
-            if(hit.collider.gameObject.layer != 6) 
+            if(hit.collider.gameObject.layer != interactableLayer) 
             {
                 StopInteract();
                 return;
             }
-            float distance = Vector3.Distance(transform.position, hit.point);
-            if(distance > maxInteractionDistance) 
+            if(hit.distance > maxInteractionDistance) 
             {
                 StopInteract();
                 return;
