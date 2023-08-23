@@ -27,6 +27,11 @@ public class GrapplingGun : MonoBehaviour
     Animator animator;
     ManagersManager managers;
     [SerializeField] Transform orientation;
+    bool pulling = false;
+    bool pullingRight;
+    PullableObject pullable;
+    Vector3 hitNormal;
+
 
     float horizInput;
     float verticalInput;
@@ -55,10 +60,8 @@ public class GrapplingGun : MonoBehaviour
         {
             SetLineRendererPositions(grapplePoint);
             HandTarget.position = grapplePoint;
-            if(interacting)
-            {
-                interactableObject.GetComponentInParent<Pullable>().Pull(100, transform.position);
-            }
+            pulling = Input.GetKey(KeyCode.LeftShift);
+            
             //UpdateSwingPosition();
             //if (Vector3.Distance(transform.position, grapplePoint) <= releaseDistance)
                 //StopGrapple();
@@ -67,30 +70,62 @@ public class GrapplingGun : MonoBehaviour
     void FixedUpdate()
     {
         if(joint != null) SwingMovement();
+        if(interacting && isGrappling)
+        {
+            Vector3 directionToPlayer = VectorUtility.GetDirection(grapplePoint, VectorUtility.FlattenVector(projectileSpawnPoint.position, grapplePoint.y));
+            float angleToPlayer = Vector3.Angle(hitNormal, directionToPlayer);
+            Debug.Log(angleToPlayer);
+            if(pullable == null) pullable = interactableObject.GetComponentInParent<PullableObject>();
+            if(pulling)
+                if(angleToPlayer > 90) return;
+                if(pullingRight) pullable.MoveRight();
+                else pullable.MoveLeft();
+            if(!pulling)
+                pullable.Stop();
+        }
     }
 
     Vector3 CheckForSwingPoint()
     {
         RaycastHit rayHit;
         RaycastHit sphereHit;
-        Vector3 SwingPoint;
+        Vector3 swingPoint;
 
         Ray camRay = cam.ScreenPointToRay(Input.mousePosition);
 
         if (Physics.Raycast(camRay, out rayHit, maxDistance, grappleable))
         {
-            SwingPoint = rayHit.point;
+            swingPoint = rayHit.point;
             if(rayHit.collider.gameObject.layer == 6)
             {
+                hitNormal = rayHit.normal;
                 interactableObject = rayHit.collider.gameObject;
+                Debug.DrawRay(rayHit.point, rayHit.normal, Color.blue, 3f);
+                
+                
+                if(rayHit.normal.x < 0 && rayHit.normal.z < 0)
+                {
+                    pullingRight = false;
+                    Debug.Log("hit left side"); 
+                }
+                if(rayHit.normal.x > 0 && rayHit.normal.z > 0)
+                {
+                    Debug.Log("hit right side");
+                    pullingRight = true;
+                }
                 interacting = true;
             } 
-            return SwingPoint;
+            else
+            {
+                interactableObject = null;
+                interacting = false;
+            }
+            return swingPoint;
         }
         if(Physics.SphereCast(camRay, aimAssistRadius,out sphereHit, maxDistance, grappleable))
         {
-            SwingPoint = sphereHit.point;
-            return SwingPoint;
+            swingPoint = sphereHit.point;
+            return swingPoint;
         }
         // return blank if no potential swinging points are found
         return Vector3.zero;

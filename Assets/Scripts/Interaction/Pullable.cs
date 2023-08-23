@@ -31,10 +31,15 @@ public class Pullable : MonoBehaviour
     }
     public void Pull(float force, Vector3 pullLocation)
     {
+        if(ReachedConstraintsCheck()) return;
         Vector3 direction;
 
         direction = pullLocation - transform.position;
         rb.AddForce(direction * force, ForceMode.Force);
+    }
+    public void Stop()
+    {
+        rb.velocity = Vector3.zero;
     }
     private void ConstrainMovementToLocalXAxis()
     {
