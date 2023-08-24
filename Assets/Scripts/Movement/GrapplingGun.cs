@@ -72,14 +72,20 @@ public class GrapplingGun : MonoBehaviour
         if(joint != null) SwingMovement();
         if(interacting && isGrappling)
         {
+            if(pullable == null) pullable = interactableObject.GetComponentInParent<PullableObject>();
+            if(pullable == null) return;
             Vector3 directionToPlayer = VectorUtility.GetDirection(grapplePoint, VectorUtility.FlattenVector(projectileSpawnPoint.position, grapplePoint.y));
             float angleToPlayer = Vector3.Angle(hitNormal, directionToPlayer);
-            Debug.Log(angleToPlayer);
-            if(pullable == null) pullable = interactableObject.GetComponentInParent<PullableObject>();
             if(pulling)
-                if(angleToPlayer > 90) return;
+            {
+                if(angleToPlayer > 90)
+                {
+                    StopGrapple();
+                    return;
+                } 
                 if(pullingRight) pullable.MoveRight();
                 else pullable.MoveLeft();
+            }  
             if(!pulling)
                 pullable.Stop();
         }
@@ -205,6 +211,8 @@ public class GrapplingGun : MonoBehaviour
         animator.SetTrigger("StopSwinging");
         pm.swinging = false;
         isGrappling = false;    
+        interactableObject = null;
+        interacting = false;
         Destroy(joint);
         lr.enabled = false;
     }
