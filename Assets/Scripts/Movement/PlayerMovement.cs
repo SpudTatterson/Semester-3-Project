@@ -150,11 +150,20 @@ public class PlayerMovement : MonoBehaviour
     {  
         Ray ray = cam.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        Physics.Raycast(ray,out hit, Mathf.Infinity, whatIsGround);
-        Vector3 flatHitPoint = VectorUtility.FlattenVector(hit.point, transform.position.y);
-        Vector3 hitPointDirection = flatHitPoint - transform.position;
-        float angle = Vector3.Angle(transform.forward, hitPointDirection);
-        if(angle < 150)  headConstraint.position = flatHitPoint;
+        Vector3 targetPosition;
+        Vector3 targetDirection;
+        if (Physics.Raycast(ray,out hit, Mathf.Infinity, whatIsGround))
+        {          
+            targetPosition = VectorUtility.FlattenVector(hit.point, headConstraint.position.y);     
+        }
+        else   
+        {
+            Vector3 pointAlongRay = ray.origin + ray.direction * 20;
+            targetPosition = VectorUtility.FlattenVector(pointAlongRay, headConstraint.position.y);
+        }
+        targetDirection = VectorUtility.GetDirection(transform.position, targetPosition);        
+        float angle = Vector3.Angle(transform.forward, targetDirection);
+        if(angle < 150)  headConstraint.position = targetPosition;
         else 
         {
             managers.ikRig.SwitchHeadAimRigSource();
