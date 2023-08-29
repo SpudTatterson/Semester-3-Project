@@ -3,13 +3,17 @@ using UnityEngine;
 
 public class CrowMovement : MonoBehaviour
 {
-    //[SerializeField] Vector3[] locations;
-    //[SerializeField] float[] timeToNextLocation;
+    [Header("Destinations")]
     [SerializeField] CrowDestination[] crowDestinations;
-    public int currentLocation = 0;
-    float timer;
-    Transform player;
+
+
+    int currentLocation = 0;
     bool startedFlying = false;
+
+
+    [Header("References")]
+    Transform player;
+    
 
     void Awake()
     {
@@ -20,7 +24,7 @@ public class CrowMovement : MonoBehaviour
 {
     if (currentLocation + 1 >= crowDestinations.Length)
     {
-        // Crow has reached its final destination, you can handle this case
+        // Got to crow this is the win condition so trigger win thing here i guess
         yield break;
     }
     startedFlying = true;
