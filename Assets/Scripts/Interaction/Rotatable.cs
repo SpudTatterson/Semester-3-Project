@@ -2,15 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Rotatable : MonoBehaviour
+public class Rotatable : MonoBehaviour ,IInteractable
 {
     [SerializeField] Vector2 minMaxAngle = new Vector2(45, -45);
     [SerializeField] float rotationSpeed = 5f;
     [SerializeField] bool active = false;
+    [SerializeField] string interactionText = "Press \"E\" To Interact.";
 
     float currentAngle;
     float targetAngle; 
     Vector2 calculatedMinMaxAngles;
+
+    
 
     // Start is called before the first frame update
     void Start()
@@ -47,5 +50,10 @@ public class Rotatable : MonoBehaviour
     public void SetAsActiveRotatable(bool toggle)
     {
         active = toggle;
+    }
+    
+    public void Use()
+    {
+
     }
 }
