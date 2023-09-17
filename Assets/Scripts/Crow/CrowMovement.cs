@@ -13,10 +13,12 @@ public class CrowMovement : MonoBehaviour
 
     [Header("References")]
     Transform player;
+    Animator animator;
     
 
     void Awake()
     {
+        animator = GetComponent<Animator>();
         player = FindObjectOfType<PlayerMovement>().transform;
         transform.position = crowDestinations[0].Destination;
     }
@@ -28,6 +30,8 @@ public class CrowMovement : MonoBehaviour
         yield break;
     }
     startedFlying = true;
+    animator.SetBool("Flying", true);
+
     Vector3 startPosition = transform.position;
     Vector3 targetPosition = crowDestinations[currentLocation + 1].Destination;
     float journeyLength = Vector3.Distance(startPosition, targetPosition);
@@ -48,6 +52,7 @@ public class CrowMovement : MonoBehaviour
     Debug.Log("finished flying");
     transform.position = targetPosition;
     currentLocation++;
+    animator.SetBool("Flying", false);
     startedFlying = false;
 }
 
