@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -16,12 +18,14 @@ public class LightBeam : MonoBehaviour
     [SerializeField] bool shootBeam = true;
     [SerializeField] bool initialBeam = false;
     [SerializeField] float distance;
+    [SerializeField] int beamsRequiredToActivate = 1;
 
     LineRenderer lr;
     bool receivedBeam = false;
     Vector3 direction;
     Vector3 beamLocation;
     Vector3 hitPoint;
+    public List<LightBeam> receivedBeams = new List<LightBeam>();
     // Start is called before the first frame update
     void Start()
     {
@@ -35,7 +39,7 @@ public class LightBeam : MonoBehaviour
         if(initialBeam) UpdateBeamDirection();
         if(initialBeam || (receivedBeam && shootBeam)) ShootBeam();
         if(!receivedBeam && !initialBeam) lr.enabled = false;
-        UpdateLight();
+        if(lightObject) UpdateLight();
         receivedBeam = false;       // Make sure that the beam is disabled if nothing is hit
         
         //Debug.DrawRay(beamLocation, direction * 10);      
@@ -63,7 +67,8 @@ public class LightBeam : MonoBehaviour
         beamLocation = hit.point;
         receivedBeam = true;
         lr.enabled = true;
-        receiveBeamEvents.Invoke();
+        if(receivedBeams.Count >= beamsRequiredToActivate) receiveBeamEvents.Invoke();
+        
     }
     public void ShootBeam()
     {
@@ -75,6 +80,10 @@ public class LightBeam : MonoBehaviour
                 LightBeam beam; 
                 if(beam = hit.transform.GetComponentInParent<LightBeam>())
                 {
+                    if(!beam.receivedBeams.Contains(this))
+                    {
+                        beam.receivedBeams.Add(this);
+                    }
                     beam.ReceiveBeam(hit, direction);
                 }        
             }
