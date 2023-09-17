@@ -91,6 +91,13 @@ public class LightBeam : MonoBehaviour
             hitPoint = hit.point;
             distance = hit.distance;
         }
+        else
+        {
+            Vector3 pointAlongRay = beamLocation + direction * lightBeamMaxDistance;
+            hitPoint = pointAlongRay;
+            distance = lightBeamMaxDistance;
+            SetBeamPositions();
+        }
     }
     Vector3 CalculateNewBeamDirection(Vector3 inDirection, RaycastHit hit)
     {
