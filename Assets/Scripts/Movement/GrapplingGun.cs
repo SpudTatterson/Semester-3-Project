@@ -173,7 +173,7 @@ public class GrapplingGun : MonoBehaviour
 
         // the distance grapple will try to keep from grapple point. 
         joint.maxDistance = distanceFromPoint * 0.8f;
-        joint.minDistance = distanceFromPoint * 0.3f;
+        joint.minDistance = distanceFromPoint * 0.5f;
 
         joint.spring = 4.5f;
         joint.damper = 7f;
