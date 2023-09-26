@@ -26,9 +26,7 @@ public class IKRigManager : MonoBehaviour
 
     public void SwitchHeadAimRigSource()
     {
-        Debug.Log(headAimRig.data.sourceObjects.GetWeight(0));
         headAimRig.data.sourceObjects.SetWeight(0, 0f);
-        Debug.Log(headAimRig.data.sourceObjects.GetWeight(0));
         headAimRig.data.sourceObjects.SetWeight(1, 1f);
     }
     public static IEnumerator SetRigWeight(TwoBoneIKConstraint rig, float targetWeight, float lerpTime)
