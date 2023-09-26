@@ -7,6 +7,7 @@ public class Rotatable : Interactable
     [SerializeField] Vector2 minMaxAngle = new Vector2(45, -45);
     [SerializeField] float rotationSpeed = 5f;
     [SerializeField] bool active = false;
+    [SerializeField] bool startWithRandomRotation = false;
     float currentAngle;
     float targetAngle; 
     Vector2 calculatedMinMaxAngles;
@@ -18,9 +19,18 @@ public class Rotatable : Interactable
     void Start()
     {
         currentAngle = transform.localEulerAngles.y;
+        targetAngle = currentAngle; 
         calculatedMinMaxAngles.x = currentAngle + minMaxAngle.x;
         calculatedMinMaxAngles.y = currentAngle + minMaxAngle.y;
-        targetAngle = currentAngle; 
+
+        if(startWithRandomRotation)
+        {
+            float rndRotation = Random.Range(calculatedMinMaxAngles.x, calculatedMinMaxAngles.y);
+            transform.localRotation = Quaternion.Euler(transform.localEulerAngles.x, rndRotation,
+            transform.localEulerAngles.z);
+            currentAngle = rndRotation;
+            targetAngle = rndRotation;
+        }
     }
 
     // Update is called once per frame
