@@ -34,6 +34,7 @@ public class CrowMovement : MonoBehaviour
 
     Vector3 startPosition = transform.position;
     Vector3 targetPosition = crowDestinations[currentLocation + 1].Destination;
+    transform.rotation = Quaternion.LookRotation(targetPosition);
     float journeyLength = Vector3.Distance(startPosition, targetPosition);
     float journeyTime = crowDestinations[currentLocation + 1 ].time;
 
