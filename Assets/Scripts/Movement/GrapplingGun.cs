@@ -184,12 +184,22 @@ public class GrapplingGun : MonoBehaviour
     {
         //if(!IsPlayerUnderGrapplePoint()) return;
 
-        float speedModifier = GetSpeedModifier();
         Vector3 moveDir = pm.GiveMoveDir();
+
+        if(Input.GetKey(KeyCode.LeftShift) && !interacting)
+        {
+            Vector3 directionToPoint = VectorUtility.GetDirection(projectileSpawnPoint.position, grapplePoint);
+
+            rb.AddForce(directionToPoint * ThrustForce * 10 * Time.deltaTime);
+
+            float distanceToPoint = Vector3.Distance(projectileSpawnPoint.position, grapplePoint);
+
+            joint.maxDistance = distanceToPoint * 0.8f;
+            joint.minDistance = distanceToPoint * 0.5f;
+        }
 
         rb.AddForce(moveDir * ThrustForce * 10 * Time.deltaTime);
         //rb.AddForce(orientation.forward * forwardThrustForce * 10 * Time.deltaTime, ForceMode.Acceleration);
-        Debug.DrawRay(transform.position, orientation.forward);
     }
 
     bool IsPlayerUnderGrapplePoint()
