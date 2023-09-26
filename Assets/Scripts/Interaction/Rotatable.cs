@@ -8,22 +8,21 @@ public class Rotatable : Interactable
     [SerializeField] float rotationSpeed = 5f;
     [SerializeField] bool active = false;
     [SerializeField] bool startWithRandomRotation = false;
+    [SerializeField] Transform secondCameraTransform;
     float currentAngle;
-    float targetAngle; 
+    float targetAngle;
     Vector2 calculatedMinMaxAngles;
-
-
-
 
     // Start is called before the first frame update
     void Start()
     {
+        if (secondCameraTransform == null) secondCameraTransform = transform;
         currentAngle = transform.localEulerAngles.y;
-        targetAngle = currentAngle; 
+        targetAngle = currentAngle;
         calculatedMinMaxAngles.x = currentAngle + minMaxAngle.x;
         calculatedMinMaxAngles.y = currentAngle + minMaxAngle.y;
 
-        if(startWithRandomRotation)
+        if (startWithRandomRotation)
         {
             float rndRotation = Random.Range(calculatedMinMaxAngles.x, calculatedMinMaxAngles.y);
             transform.localRotation = Quaternion.Euler(transform.localEulerAngles.x, rndRotation,
@@ -38,11 +37,11 @@ public class Rotatable : Interactable
     {
         if (active)
         {
-            if (Input.GetKey(KeyCode.E))
+            if (Input.GetKey(KeyCode.D))
             {
                 targetAngle += rotationSpeed * Time.deltaTime;
             }
-            if (Input.GetKey(KeyCode.Q))
+            if (Input.GetKey(KeyCode.A))
             {
                 targetAngle -= rotationSpeed * Time.deltaTime;
             }
@@ -60,9 +59,23 @@ public class Rotatable : Interactable
     {
         active = toggle;
     }
-    
+
     public override void Use()
     {
-        active = true;
+        Interactor interactor = FindObjectOfType<Interactor>();
+        if(!active)
+        {
+            interactor.ToggleCameras();
+            interactor.TogglePlayerMovement();
+            interactor.SetSecondCamPosition(secondCameraTransform.position, secondCameraTransform.rotation, transform);
+            active = true;
+        }
+        else
+        {
+            interactor.ToggleCameras();
+            interactor.TogglePlayerMovement();
+            active = false;
+        }
     }
+
 }

@@ -48,6 +48,7 @@ public class GrapplingGun : MonoBehaviour
 
     void Update()
     {
+        if(pm.enabled == false) return;
         if (Input.GetButtonDown("Fire1"))
         {
             if (!isGrappling)

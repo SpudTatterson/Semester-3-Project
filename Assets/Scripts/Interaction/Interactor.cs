@@ -6,12 +6,17 @@ public class Interactor : MonoBehaviour
 {
     [Header("Settings")]
     [SerializeField] float maxInteractionDistance = 4f;
+    [SerializeField] float interactionRadius = 0.5f;
     [SerializeField] LayerMask interactMask;
     [SerializeField] KeyCode interactKey = KeyCode.F;
-    
+    [SerializeField] LayerMask playerMask;
+
     [Header("References")]
     Camera cam;
+    [SerializeField] Camera secondCamera;
     ManagersManager managers;
+    PlayerMovement pm;
+
 
     //private vars
     Interactable lastInteractedObject;
@@ -23,7 +28,7 @@ public class Interactor : MonoBehaviour
     {
         cam = Camera.main;
         managers = FindObjectOfType<ManagersManager>();
-        
+        pm = FindObjectOfType<PlayerMovement>();
     }
 
     // Update is called once per frame
@@ -31,31 +36,31 @@ public class Interactor : MonoBehaviour
     {
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        if(Physics.Raycast(ray,out hit, maxInteractionDistance, interactMask))
+        if (Physics.SphereCast(ray, interactionRadius, out hit, maxInteractionDistance, interactMask))
         {
-            if(hit.collider.gameObject.layer != interactableLayer) 
-            {
-                StopInteract();
-                return;
-            }
-            if(hit.distance > maxInteractionDistance) 
-            {
-                StopInteract();
-                return;
-            }
-            managers.UI.interactText.gameObject.SetActive(true);
-            if(Input.GetKeyDown(interactKey))
-            {
-                lastInteractedObject = hit.collider.gameObject.GetComponentInParent<Interactable>();
-                lastInteractedObject.Interact();
-                interacted = true;
-            }
             
+            if ((hit.collider.gameObject.layer != interactableLayer) /*|| (hit.distance > maxInteractionDistance)*/)
+            {
+                StopInteract();
+                return;
+            }
+            lastInteractedObject = hit.collider.gameObject.GetComponentInParent<Interactable>();
+            managers.UI.interactText.text = lastInteractedObject.interactionText;
+            if (Physics.CheckSphere(lastInteractedObject.interactionPoint.position,
+             lastInteractedObject.interactionDistance, playerMask))
+            {
+                if(interacted == false) managers.UI.interactText.gameObject.SetActive(true);
+            }
+            if (Input.GetKeyDown(interactKey))
+            {
+                lastInteractedObject.Use();
+                interacted = true;
+                managers.UI.interactText.gameObject.SetActive(false);
+            }
         }
         else
         {
             StopInteract();
-
         }
     }
 
@@ -67,5 +72,20 @@ public class Interactor : MonoBehaviour
             lastInteractedObject.StopInteract();
             interacted = false;
         }
+    }
+    public void ToggleCameras()
+    {
+        cam.gameObject.SetActive(!cam.isActiveAndEnabled);
+        secondCamera.gameObject.SetActive(!secondCamera.isActiveAndEnabled);
+    }
+    public void TogglePlayerMovement()
+    {
+        pm.enabled = !pm.enabled;
+    }
+    public void SetSecondCamPosition(Vector3 position, Quaternion rotation, Transform parent)
+    {
+        secondCamera.transform.position = position;
+        secondCamera.transform.rotation = rotation;
+        secondCamera.transform.parent = parent;
     }
 }
