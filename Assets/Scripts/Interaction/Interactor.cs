@@ -69,7 +69,6 @@ public class Interactor : MonoBehaviour
         managers.UI.interactText.gameObject.SetActive(false);
         if (interacted)
         {
-            lastInteractedObject.StopInteract();
             interacted = false;
         }
     }

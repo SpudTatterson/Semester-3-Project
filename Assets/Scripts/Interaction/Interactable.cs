@@ -10,7 +10,7 @@ public class Interactable : MonoBehaviour
     public string interactionText = "\"E\" To Interact.";
     public virtual void Use()
     {
-
+        Interact();
     }
     void Awake()
     {
@@ -23,10 +23,6 @@ public class Interactable : MonoBehaviour
     public void Interact()
     {
         interactEvents.Invoke();
-    }
-    public void StopInteract()
-    {
-        stopInteractEvents.Invoke();
     }
     void OnDrawGizmosSelected()
     {
