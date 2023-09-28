@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 
 public class GrapplingGun : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class GrapplingGun : MonoBehaviour
     [SerializeField] float playerDetectionRadius = 2f;
     [SerializeField] LayerMask playerLayer;
     [SerializeField] Transform HandTarget;
+    [SerializeField] TextMeshProUGUI pullText;
+
 
     LineRenderer lr;
     Vector3 grapplePoint;
@@ -141,6 +144,7 @@ public class GrapplingGun : MonoBehaviour
     void StartGrapple()
     {   
         grapplePoint = CheckForSwingPoint();
+        pullText.gameObject.SetActive(true);
         if(grapplePoint != Vector3.zero)
         {
             HandTarget.position = VectorUtility.GetDirection(transform.position, grapplePoint);
@@ -187,7 +191,7 @@ public class GrapplingGun : MonoBehaviour
 
         Vector3 moveDir = pm.GiveMoveDir();
 
-        if(Input.GetKey(KeyCode.LeftShift) && !interacting)
+        if(pulling && !interacting)
         {
             Vector3 directionToPoint = VectorUtility.GetDirection(projectileSpawnPoint.position, grapplePoint);
 
@@ -218,6 +222,7 @@ public class GrapplingGun : MonoBehaviour
     void StopGrapple()
     {
         StartCoroutine(IKRigManager.SetRigWeight(managers.ikRig.rightHandRig, 0, 0.1f));
+        pullText.gameObject.SetActive(false);
         animator.SetBool("StartedSwinging", false);
         animator.SetTrigger("StopSwinging");
         pm.swinging = false;
