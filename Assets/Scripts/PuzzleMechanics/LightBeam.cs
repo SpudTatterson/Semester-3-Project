@@ -9,6 +9,7 @@ public class LightBeam : MonoBehaviour
     [Header("References")]
     [SerializeField] Light lightObject;
     [SerializeField] Transform initialBeamShootPoint;
+    [SerializeField] Material mat;
 
 
     [Header("Settings")]
@@ -25,12 +26,18 @@ public class LightBeam : MonoBehaviour
     Vector3 direction;
     Vector3 beamLocation;
     Vector3 hitPoint;
-    public List<LightBeam> receivedBeams = new List<LightBeam>();
+    List<LightBeam> receivedBeams = new List<LightBeam>();
+    Color emissionColor;
     // Start is called before the first frame update
     void Start()
     {
         lr = GetComponent<LineRenderer>();
         lr.enabled = initialBeam; // Disable the lineRenderer by default if the object is not a beam emitter 
+        if(mat)
+        {   
+            emissionColor = new Color(0.7490196f,0.7490196f,0.7490196f);
+            mat.SetColor("_EmissionColor", emissionColor);
+        } 
     }
 
     // Update is called once per frame
@@ -63,6 +70,7 @@ public class LightBeam : MonoBehaviour
     }
     void ReceiveBeam(RaycastHit hit, Vector3 InitialDirection)
     {
+        if(mat) mat.SetColor("_EmissionColor", emissionColor * 7 * receivedBeams.Count);
         direction = CalculateNewBeamDirection(InitialDirection ,hit);
         beamLocation = hit.point;
         receivedBeam = true;
@@ -83,6 +91,7 @@ public class LightBeam : MonoBehaviour
                     if(!beam.receivedBeams.Contains(this))
                     {
                         beam.receivedBeams.Add(this);
+                        
                     }
                     beam.ReceiveBeam(hit, direction);
                 }        
