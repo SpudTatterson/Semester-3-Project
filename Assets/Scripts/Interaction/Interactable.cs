@@ -6,7 +6,7 @@ public class Interactable : MonoBehaviour
     [SerializeField] UnityEvent interactEvents;
     [SerializeField] UnityEvent stopInteractEvents;
     public Transform interactionPoint;
-    public float interactionDistance = 5f;
+    public float interactionDistance = 2f;
     public string interactionText = "\"E\" To Interact.";
     public virtual void Use()
     {
@@ -23,6 +23,10 @@ public class Interactable : MonoBehaviour
     public void Interact()
     {
         interactEvents.Invoke();
+    }
+    public void SetAsUnInteractable()
+    {
+        Destroy(this);
     }
     void OnDrawGizmosSelected()
     {
