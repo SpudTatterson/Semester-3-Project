@@ -424,8 +424,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   interactionPoint: {fileID: 0}
-  interactionDistance: 8
-  interactionText: Press "E" To Interact.
+  interactionDistance: 2
+  interactionText: '"E" To Pick.'
 --- !u!1 &8567384620950373570
 GameObject:
   m_ObjectHideFlags: 0

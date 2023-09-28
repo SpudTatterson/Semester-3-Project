@@ -7,6 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 61303563, guid: 2dc60f540a598c04486d6fae86195978, type: 3}
+      propertyPath: startWithRandomRotation
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 61303564, guid: 2dc60f540a598c04486d6fae86195978, type: 3}
       propertyPath: initialBeam
       value: 0
@@ -69,7 +73,7 @@ PrefabInstance:
     - target: {fileID: 3284666112672828335, guid: 2dc60f540a598c04486d6fae86195978,
         type: 3}
       propertyPath: m_Name
-      value: MIrror
+      value: MIrror Variant
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2dc60f540a598c04486d6fae86195978, type: 3}

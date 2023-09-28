@@ -146,6 +146,37 @@ Transform:
   m_Father: {fileID: 1444018827064741815}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &318136920956487359
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2673508585966971039}
+  m_Layer: 6
+  m_Name: Interaction Point
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2673508585966971039
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 318136920956487359}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.24, y: -0.42, z: -1.39}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1444018827064741815}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &326030487741457785
 GameObject:
   m_ObjectHideFlags: 0
@@ -253,7 +284,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1444018827064741815}
   - component: {fileID: 61303565}
-  - component: {fileID: -1679440757954951151}
   - component: {fileID: 61303563}
   - component: {fileID: 61303564}
   m_Layer: 6
@@ -279,6 +309,8 @@ Transform:
   - {fileID: 4348419897979412303}
   - {fileID: 264995091}
   - {fileID: 1984845063}
+  - {fileID: 2673508585966971039}
+  - {fileID: 3660430485375148215}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -381,48 +413,6 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
---- !u!114 &-1679440757954951151
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3284666112672828335}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 143341ab9be2f15499b2d8e9647c9fdb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactEvents:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 61303563}
-        m_TargetAssemblyTypeName: Rotatable, Assembly-CSharp
-        m_MethodName: SetAsActiveRotatable
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-  stopInteractEvents:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 61303563}
-        m_TargetAssemblyTypeName: Rotatable, Assembly-CSharp
-        m_MethodName: SetAsActiveRotatable
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &61303563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -435,9 +425,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f2a9a4ebcf2e7c49a227eba4f980ee2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  interactEvents:
+    m_PersistentCalls:
+      m_Calls: []
+  stopInteractEvents:
+    m_PersistentCalls:
+      m_Calls: []
+  interactionPoint: {fileID: 2673508585966971039}
+  interactionDistance: 2
+  interactionText: '"E" To Rotate.'
   minMaxAngle: {x: 45, y: -45}
   rotationSpeed: 10
   active: 0
+  startWithRandomRotation: 1
+  secondCameraTransform: {fileID: 3660430485375148215}
 --- !u!114 &61303564
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -453,13 +454,46 @@ MonoBehaviour:
   lightObject: {fileID: 264995093}
   initialBeamShootPoint: {fileID: 1984845063}
   reflectiveTag: Reflective
-  lightBeamMaxDistance: 100
+  lightBeamMaxDistance: 300
   receiveBeamEvents:
     m_PersistentCalls:
       m_Calls: []
   shootBeam: 1
   initialBeam: 1
   distance: 0
+  beamsRequiredToActivate: 1
+  receivedBeams: []
+--- !u!1 &4018864431198756369
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3660430485375148215}
+  m_Layer: 6
+  m_Name: SecondCamera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3660430485375148215
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4018864431198756369}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.007, y: 1.068, z: 0.325}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1444018827064741815}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5352889889163945591
 GameObject:
   m_ObjectHideFlags: 0
