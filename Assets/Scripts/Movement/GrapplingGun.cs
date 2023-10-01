@@ -3,41 +3,37 @@ using TMPro;
 
 public class GrapplingGun : MonoBehaviour
 {
-    [SerializeField] LayerMask grappleable;
-    [SerializeField] Transform projectileSpawnPoint;
+    [Header("Settings")]
     [SerializeField] float maxDistance = 100f;
-    [SerializeField] float releaseDistance = 2f;
     [SerializeField] float aimAssistRadius = 2f;
     [SerializeField] float ThrustForce = 10f;
     [SerializeField] float playerDetectionRadius = 2f;
+
+    [Header("References")]
+    [SerializeField] LayerMask grappleable;
     [SerializeField] LayerMask playerLayer;
+    [SerializeField] Transform projectileSpawnPoint;
     [SerializeField] Transform HandTarget;
     [SerializeField] TextMeshProUGUI pullText;
-
-
+    [SerializeField] Transform orientation;
     LineRenderer lr;
-    Vector3 grapplePoint;
-    bool isGrappling = false;
     Camera cam;
-    //CharacterController characterController;
-    Vector3 swingDirection;
-    float swingDistance;
     PlayerMovement pm;
-    GameObject interactableObject;
-    bool interacting = false;
-    SpringJoint joint;
     Rigidbody rb;
     Animator animator;
     ManagersManager managers;
-    [SerializeField] Transform orientation;
+    GameObject interactableObject;
+    SpringJoint joint;
+    PullableObject pullable;
+
+    [Header("Private vars")]
+    Vector3 grapplePoint;
+    bool isGrappling = false;
+    bool interacting = false;
     bool pulling = false;
     bool pullingRight;
-    PullableObject pullable;
     Vector3 hitNormal;
-
-
-    float horizInput;
-    float verticalInput;
+    bool NotGrappleable;
 
     void Start()
     {
@@ -51,7 +47,7 @@ public class GrapplingGun : MonoBehaviour
 
     void Update()
     {
-        if(pm.enabled == false) return;
+        if (pm.enabled == false) return;
         if (Input.GetButtonDown("Fire1"))
         {
             if (!isGrappling)
@@ -65,32 +61,28 @@ public class GrapplingGun : MonoBehaviour
             SetLineRendererPositions(grapplePoint);
             HandTarget.position = grapplePoint;
             pulling = Input.GetKey(KeyCode.LeftShift);
-            
-            //UpdateSwingPosition();
-            //if (Vector3.Distance(transform.position, grapplePoint) <= releaseDistance)
-                //StopGrapple();
         }
     }
     void FixedUpdate()
     {
-        if(joint != null) SwingMovement();
-        if(interacting && isGrappling)
+        if (joint != null) SwingMovement();
+        if (interacting && isGrappling)
         {
-            if(pullable == null) pullable = interactableObject.GetComponentInParent<PullableObject>();
-            if(pullable == null) return;
+            if (pullable == null) pullable = interactableObject.GetComponentInParent<PullableObject>();
+            if (pullable == null) return;
             Vector3 directionToPlayer = VectorUtility.GetDirection(grapplePoint, VectorUtility.FlattenVector(projectileSpawnPoint.position, grapplePoint.y));
             float angleToPlayer = Vector3.Angle(hitNormal, directionToPlayer);
-            if(pulling)
+            if (pulling)
             {
-                if(angleToPlayer > 90)
+                if (angleToPlayer > 90)
                 {
                     StopGrapple();
                     return;
-                } 
-                if(pullingRight) pullable.MoveRight();
+                }
+                if (pullingRight) pullable.MoveRight();
                 else pullable.MoveLeft();
-            }  
-            if(!pulling)
+            }
+            if (!pulling)
                 pullable.Stop();
         }
     }
@@ -106,46 +98,65 @@ public class GrapplingGun : MonoBehaviour
         if (Physics.Raycast(camRay, out rayHit, maxDistance, grappleable))
         {
             swingPoint = rayHit.point;
-            if(rayHit.collider.gameObject.layer == 6)
-            {
-                hitNormal = rayHit.normal;
-                interactableObject = rayHit.collider.gameObject;
-                Debug.DrawRay(rayHit.point, rayHit.normal, Color.blue, 3f);
-                
-                
-                if(rayHit.normal.x < 0 && rayHit.normal.z < 0)
-                {
-                    pullingRight = false;
-                    Debug.Log("hit left side"); 
-                }
-                if(rayHit.normal.x > 0 && rayHit.normal.z > 0)
-                {
-                    Debug.Log("hit right side");
-                    pullingRight = true;
-                }
-                interacting = true;
-            } 
-            else
-            {
-                interactableObject = null;
-                interacting = false;
-            }
+            CheckIfInteractable(rayHit);
             return swingPoint;
         }
-        if(Physics.SphereCast(camRay, aimAssistRadius,out sphereHit, maxDistance, grappleable))
+        if (Physics.SphereCast(camRay, aimAssistRadius, out sphereHit, maxDistance, grappleable))
         {
             swingPoint = sphereHit.point;
+            CheckIfInteractable(sphereHit);
             return swingPoint;
         }
         // return blank if no potential swinging points are found
         return Vector3.zero;
     }
 
+    void CheckIfInteractable(RaycastHit rayHit)
+    {
+        if (rayHit.collider.tag == "NotGrappleable")
+        {
+            NotGrappleable = true;
+            return;
+        }
+        if (rayHit.collider.gameObject.layer == 6)
+        {
+            hitNormal = rayHit.normal;
+            interactableObject = rayHit.collider.gameObject;
+            interacting = true;
+            CheckHitSide(rayHit);
+        }
+        else
+        {
+            interactableObject = null;
+            interacting = false;
+        }
+
+        void CheckHitSide(RaycastHit rayHit)
+        {
+            if (rayHit.normal.x < 0 && rayHit.normal.z < 0)
+            {
+                pullingRight = false;
+                Debug.Log("hit left side");
+            }
+            if (rayHit.normal.x > 0 && rayHit.normal.z > 0)
+            {
+                Debug.Log("hit right side");
+                pullingRight = true;
+            }
+        }
+    }
+
     void StartGrapple()
-    {   
+    {
         grapplePoint = CheckForSwingPoint();
+        if (NotGrappleable)
+        {
+            NotGrappleable = false;
+            StopGrapple();
+            return;
+        }
         pullText.gameObject.SetActive(true);
-        if(grapplePoint != Vector3.zero)
+        if (grapplePoint != Vector3.zero)
         {
             HandTarget.position = VectorUtility.GetDirection(transform.position, grapplePoint);
             //StartCoroutine(IKRigManager.SetRigWeight(managers.ikRig.rightHandRig, 1, 0.1f));
@@ -153,12 +164,12 @@ public class GrapplingGun : MonoBehaviour
             lr.enabled = true;
             pm.swinging = true;
 
-            if(!interacting)
+            if (interacting == false)
             {
                 joint = rb.gameObject.AddComponent<SpringJoint>();
                 ConfigureJoint();
             }
-            
+
 
             isGrappling = true;
         }
@@ -191,7 +202,7 @@ public class GrapplingGun : MonoBehaviour
 
         Vector3 moveDir = pm.GiveMoveDir();
 
-        if(pulling && !interacting)
+        if (pulling && !interacting)
         {
             Vector3 directionToPoint = VectorUtility.GetDirection(projectileSpawnPoint.position, grapplePoint);
 
@@ -212,21 +223,21 @@ public class GrapplingGun : MonoBehaviour
         Ray ray = new Ray(grapplePoint, Vector3.down);
         return Physics.SphereCast(ray, playerDetectionRadius, maxDistance, playerLayer);
     }
-    
+
     void SetLineRendererPositions(Vector3 pos)
     {
         lr.SetPosition(0, projectileSpawnPoint.position);
         lr.SetPosition(1, pos);
     }
 
-    void StopGrapple()
+    public void StopGrapple()
     {
         StartCoroutine(IKRigManager.SetRigWeight(managers.ikRig.rightHandRig, 0, 0.1f));
         pullText.gameObject.SetActive(false);
         animator.SetBool("StartedSwinging", false);
         animator.SetTrigger("StopSwinging");
         pm.swinging = false;
-        isGrappling = false;    
+        isGrappling = false;
         interactableObject = null;
         interacting = false;
         Destroy(joint);
