@@ -7,11 +7,13 @@ public class BoundsManager : MonoBehaviour
     [SerializeField] float bottomWorldBoundary = -62f;
     Transform player;
     Vector3 lastPosition;
+    GrapplingGun grapplingGun;
     
     // Start is called before the first frame update
     void Start()
     {
         player = FindObjectOfType<PlayerMovement>().transform;
+        grapplingGun = player.GetComponentInChildren<GrapplingGun>();
     }
 
     // Update is called once per frame
@@ -30,5 +32,6 @@ public class BoundsManager : MonoBehaviour
     {
         player.GetComponent<Rigidbody>().velocity = new Vector3();
         player.position = lastPosition;
+        grapplingGun.StopGrapple();
     }
 }
