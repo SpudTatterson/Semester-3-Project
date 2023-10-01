@@ -45,18 +45,22 @@ public class Interactor : MonoBehaviour
                 return;
             }
             lastInteractedObject = hit.collider.gameObject.GetComponentInParent<Interactable>();
-            managers.UI.interactText.text = lastInteractedObject.interactionText;
-            if (Physics.CheckSphere(lastInteractedObject.interactionPoint.position,
-             lastInteractedObject.interactionDistance, playerMask))
+            if (lastInteractedObject)
             {
-                if (interacted == false) managers.UI.interactText.gameObject.SetActive(true);
-                if (Input.GetKeyDown(interactKey))
+                managers.UI.interactText.text = lastInteractedObject.interactionText;
+                if (Physics.CheckSphere(lastInteractedObject.interactionPoint.position,
+                 lastInteractedObject.interactionDistance, playerMask))
                 {
-                    lastInteractedObject.Use();
-                    interacted = true;
-                    managers.UI.interactText.gameObject.SetActive(false);
+                    if (interacted == false) managers.UI.interactText.gameObject.SetActive(true);
+                    if (Input.GetKeyDown(interactKey))
+                    {
+                        lastInteractedObject.Use();
+                        interacted = true;
+                        managers.UI.interactText.gameObject.SetActive(false);
+                    }
                 }
             }
+
         }
         else
         {
