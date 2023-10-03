@@ -133,15 +133,22 @@ public class GrapplingGun : MonoBehaviour
 
         void CheckHitSide(RaycastHit rayHit)
         {
-            if (rayHit.normal.x < 0 && rayHit.normal.z < 0)
+            Debug.Log(rayHit.collider.tag);
+            if (rayHit.collider.tag == "LeftSide")
             {
                 pullingRight = false;
-                Debug.Log("hit left side");
+                Debug.Log("hit left side"); 
             }
-            if (rayHit.normal.x > 0 && rayHit.normal.z > 0)
+            else if (rayHit.collider.tag == "RightSide")
             {
                 Debug.Log("hit right side");
                 pullingRight = true;
+                Debug.Log(pullingRight);
+            }
+            else
+            {
+                interactableObject = null;
+                interacting = false;
             }
         }
     }

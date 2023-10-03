@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Rotatable : Interactable
 {
+    [SerializeField] Transform rotatableObject;
     [SerializeField] Vector2 minMaxAngle = new Vector2(45, -45);
     [SerializeField] float rotationSpeed = 5f;
     [SerializeField] bool active = false;
@@ -16,8 +17,9 @@ public class Rotatable : Interactable
     // Start is called before the first frame update
     void Start()
     {
-        if (secondCameraTransform == null) secondCameraTransform = transform;
-        currentAngle = transform.localEulerAngles.y;
+        if(!rotatableObject) rotatableObject = transform;
+        if (secondCameraTransform == null) secondCameraTransform = rotatableObject;
+        currentAngle = rotatableObject.localEulerAngles.y;
         targetAngle = currentAngle;
         calculatedMinMaxAngles.x = currentAngle + minMaxAngle.x;
         calculatedMinMaxAngles.y = currentAngle + minMaxAngle.y;
@@ -25,8 +27,8 @@ public class Rotatable : Interactable
         if (startWithRandomRotation)
         {
             float rndRotation = Random.Range(calculatedMinMaxAngles.x, calculatedMinMaxAngles.y);
-            transform.localRotation = Quaternion.Euler(transform.localEulerAngles.x, rndRotation,
-            transform.localEulerAngles.z);
+            rotatableObject.localRotation = Quaternion.Euler(rotatableObject.localEulerAngles.x, rndRotation,
+            rotatableObject.localEulerAngles.z);
             currentAngle = rndRotation;
             targetAngle = rndRotation;
         }
@@ -51,7 +53,7 @@ public class Rotatable : Interactable
 
             // Smoothly rotate towards the targetAngle
             currentAngle = Mathf.Lerp(currentAngle, targetAngle, rotationSpeed * Time.deltaTime);
-            transform.localRotation = Quaternion.Euler(transform.localEulerAngles.x, currentAngle, transform.localEulerAngles.z);
+            rotatableObject.localRotation = Quaternion.Euler(rotatableObject.localEulerAngles.x, currentAngle, rotatableObject.localEulerAngles.z);
         }
     }
 
