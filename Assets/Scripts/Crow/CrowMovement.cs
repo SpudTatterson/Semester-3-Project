@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using Cinemachine;
 
 public class CrowMovement : MonoBehaviour
 {
@@ -16,14 +17,17 @@ public class CrowMovement : MonoBehaviour
 
 
     [Header("References")]
-    Transform player;
+    [SerializeField]CinemachineVirtualCamera crowCam;
+    PlayerMovement pm;
+    Transform playerTransform;
     Animator animator;
 
 
     void Awake()
     {
         animator = GetComponent<Animator>();
-        player = FindObjectOfType<PlayerMovement>().transform;
+        pm = FindAnyObjectByType<PlayerMovement>();
+        playerTransform = pm.transform;
         transform.position = crowDestinations[0].Destination;
     }
     IEnumerator GoToNextLocation()
@@ -41,8 +45,12 @@ public class CrowMovement : MonoBehaviour
         transform.rotation = Quaternion.LookRotation(targetPosition);
         float journeyLength = Vector3.Distance(startPosition, targetPosition);
         float journeyTime = crowDestinations[currentLocation + 1].time;
-
         float startTime = Time.time;
+
+        if (crowDestinations[currentLocation + 1].focusCamera)
+        {
+            Invoke("StartCamFollow", crowDestinations[currentLocation + 1].timeToStartCamFollow);
+        }
 
         while (Time.time < startTime + journeyTime)
         {
@@ -54,12 +62,25 @@ public class CrowMovement : MonoBehaviour
             yield return null;
         }
         transform.position = targetPosition;
-        currentLocation++;
         transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0);
         animator.SetBool("Flying", false);
         startedFlying = false;
+        Invoke("StopCamFollow", crowDestinations[currentLocation + 1].timeToStopCamFollow);
+        currentLocation++;
     }
 
+    private void StartCamFollow()
+    {
+        crowCam.transform.localPosition = crowDestinations[currentLocation + 1].cameraLocation;
+        crowCam.Priority = 11;
+        pm.enabled = false;
+    }
+
+    private void StopCamFollow()
+    {
+        crowCam.Priority = 9;
+        pm.enabled = true;
+    }
 
     void Update()
     {
@@ -68,7 +89,7 @@ public class CrowMovement : MonoBehaviour
             transform.rotation = Quaternion.Euler(0, 328.259f,0);
             ringPickUpEvents.Invoke();
         }
-        if ((Vector3.Distance(player.position, transform.position) < crowDestinations[currentLocation].distance) && !startedFlying)
+        if ((Vector3.Distance(playerTransform.position, transform.position) < crowDestinations[currentLocation].distance) && !startedFlying)
         {
             StartCoroutine(GoToNextLocation());
         }
