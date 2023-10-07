@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1727db5f4f489848a541c9857af5ff1, type: 3}
+  m_Name: Solace
+  m_EditorClassIdentifier: 
+  reverbTail: 9.24
+  intensityClips:
+  - {fileID: 8300000, guid: ff1a176701a330a4f97bbfa599323dd2, type: 3}
+  - {fileID: 8300000, guid: db83db66396b5d145817f7320bd8dce4, type: 3}
+  - {fileID: 8300000, guid: aaf2cce875d05a546a468236322aecf4, type: 3}
+  - {fileID: 8300000, guid: 4be497341b6dfdd488c8023c00924626, type: 3}
