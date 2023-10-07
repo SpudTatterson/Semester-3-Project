@@ -62,9 +62,8 @@ public class Rotatable : Interactable
         active = toggle;
     }
 
-    public override void Use()
+    public override void Use(Interactor interactor)
     {
-        Interactor interactor = FindObjectOfType<Interactor>();
         if(!active)
         {
             interactor.ToggleCameras();

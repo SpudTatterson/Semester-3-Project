@@ -38,7 +38,6 @@ public class Interactor : MonoBehaviour
         RaycastHit hit;
         if (Physics.SphereCast(ray, interactionRadius, out hit, maxInteractionDistance, interactMask))
         {
-
             if ((hit.collider.gameObject.layer != interactableLayer) /*|| (hit.distance > maxInteractionDistance)*/)
             {
                 StopInteract();
@@ -54,7 +53,7 @@ public class Interactor : MonoBehaviour
                     if (interacted == false) managers.UI.interactText.gameObject.SetActive(true);
                     if (Input.GetKeyDown(interactKey))
                     {
-                        lastInteractedObject.Use();
+                        lastInteractedObject.Use(this);
                         interacted = true;
                         managers.UI.interactText.gameObject.SetActive(false);
                     }

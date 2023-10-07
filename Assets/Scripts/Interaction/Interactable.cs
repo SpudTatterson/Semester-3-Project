@@ -8,7 +8,7 @@ public class Interactable : MonoBehaviour
     public Transform interactionPoint;
     public float interactionDistance = 2f;
     public string interactionText = "\"E\" To Interact.";
-    public virtual void Use()
+    public virtual void Use(Interactor interactor)
     {
         Interact();
     }
