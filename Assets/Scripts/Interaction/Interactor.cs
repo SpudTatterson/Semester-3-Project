@@ -27,7 +27,7 @@ public class Interactor : MonoBehaviour
     void Start()
     {
         cam = Camera.main;
-        managers = FindObjectOfType<ManagersManager>();
+        managers = ManagersManager.instance;
         pm = FindObjectOfType<PlayerMovement>();
     }
 
