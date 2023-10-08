@@ -8,8 +8,20 @@ public class Inspectable : Interactable
     bool active = false;
     public override void Use(Interactor interactor)
     {
-        if(!active) cam.Priority = 11;
-        else cam.Priority = 1;
+        if (!active) Inspect(interactor);
+        else StopInspect(interactor);
         active = !active;
+    }
+
+    private void StopInspect(Interactor interactor)
+    {
+        interactor.TogglePlayerMovement();
+        cam.Priority = 1;
+    }
+
+    private void Inspect(Interactor interactor)
+    {
+        interactor.TogglePlayerMovement();
+        cam.Priority = 11;
     }
 }
