@@ -59,7 +59,7 @@ public class GrapplingEffect : MonoBehaviour
         // if not grappling, don't draw rope
         if (!grappling.IsGrappling())
         {
-            currentGrapplePosition = grappling.projectileSpawnPoint.position;
+            currentGrapplePosition = grappling.GetGunTip();
 
             // reset the simulation
             spring.Reset();
@@ -89,7 +89,7 @@ public class GrapplingEffect : MonoBehaviour
         spring.Update(Time.deltaTime);
 
         Vector3 grapplePoint = grappling.GetGrapplePoint();
-        Vector3 gunTipPosition = grappling.projectileSpawnPoint.transform.position;
+        Vector3 gunTipPosition = grappling.GetGunTip();
 
         // find the upwards direction relative to the rope
         Vector3 up = Quaternion.LookRotation((grapplePoint - gunTipPosition).normalized) * Vector3.up;

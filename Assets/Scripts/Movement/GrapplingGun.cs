@@ -58,7 +58,6 @@ public class GrapplingGun : MonoBehaviour
 
         if (isGrappling)
         {
-            SetLineRendererPositions(grapplePoint);
             HandTarget.position = grapplePoint;
             pulling = Input.GetKey(KeyCode.LeftShift);
         }
@@ -152,7 +151,22 @@ public class GrapplingGun : MonoBehaviour
             }
         }
     }
-
+    public bool IsGrappling()
+    {
+        return isGrappling;
+    }
+    public Vector3 GetGrapplePoint()
+    {
+        return grapplePoint;
+    }
+    public Vector3 GetGunTip()
+    {
+        return projectileSpawnPoint.position;
+    }
+        public LayerMask GetGrappleableLayerMask()
+    {
+        return grappleable;
+    }
     void StartGrapple()
     {
         grapplePoint = CheckForSwingPoint();
@@ -236,7 +250,6 @@ public class GrapplingGun : MonoBehaviour
         lr.SetPosition(0, projectileSpawnPoint.position);
         lr.SetPosition(1, pos);
     }
-
     public void StopGrapple()
     {
         StartCoroutine(IKRigManager.SetRigWeight(managers.ikRig.rightHandRig, 0, 0.1f));
