@@ -3,6 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(AudioSource))]
 public class RandomSoundPlayer : MonoBehaviour
 {
+    [Header("Settings")]
     [SerializeField] Vector2 minMaxTimeBetweenGames;
     [Header("References")]
     AudioSource audioSource;
@@ -28,7 +29,7 @@ public class RandomSoundPlayer : MonoBehaviour
 
     }
 
-    void Play()
+    public void Play()
     {
         SetRandomClip();
         audioSource.Play();
