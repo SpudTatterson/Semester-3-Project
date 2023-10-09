@@ -14,6 +14,7 @@ public class CrowMovement : MonoBehaviour
 
     int currentLocation = 0;
     bool startedFlying = false;
+    bool ringEventsTriggered = false;
 
 
     [Header("References")]
@@ -21,6 +22,7 @@ public class CrowMovement : MonoBehaviour
     PlayerMovement pm;
     Transform playerTransform;
     Animator animator;
+    RandomSoundPlayer rsp;
 
 
     void Awake()
@@ -29,6 +31,7 @@ public class CrowMovement : MonoBehaviour
         pm = FindAnyObjectByType<PlayerMovement>();
         playerTransform = pm.transform;
         transform.position = crowDestinations[0].Destination;
+        rsp = GetComponent<RandomSoundPlayer>();
     }
     IEnumerator GoToNextLocation()
     {
@@ -40,6 +43,7 @@ public class CrowMovement : MonoBehaviour
         startedFlying = true;
         animator.SetBool("Flying", true);
         animator.SetBool("Eating", false);
+        rsp.Play();
         Vector3 startPosition = transform.position;
         Vector3 targetPosition = crowDestinations[currentLocation + 1].Destination;
         transform.rotation = Quaternion.LookRotation(targetPosition);
@@ -84,14 +88,20 @@ public class CrowMovement : MonoBehaviour
 
     void Update()
     {
-        if(currentLocation == ringLocation)
+        if(currentLocation == ringLocation && !ringEventsTriggered)
         {
-            transform.rotation = Quaternion.Euler(0, 328.259f,0);
-            ringPickUpEvents.Invoke();
+            transform.rotation = Quaternion.Euler(0, 328.259f, 0);
+            animator.SetTrigger("Take");
+            ringEventsTriggered = true;
         }
         if ((Vector3.Distance(playerTransform.position, transform.position) < crowDestinations[currentLocation].distance) && !startedFlying)
         {
             StartCoroutine(GoToNextLocation());
         }
+    }
+
+    public void TriggerRingEvents()
+    {
+        ringPickUpEvents.Invoke();
     }
 }
