@@ -821,6 +821,8 @@ GameObject:
   - component: {fileID: 712999096}
   - component: {fileID: 712999098}
   - component: {fileID: 5369061912016083089}
+  - component: {fileID: 3312299977416615269}
+  - component: {fileID: 7250308231411845590}
   m_Layer: 6
   m_Name: Crow2
   m_TagString: NotGrappleable
@@ -882,24 +884,52 @@ MonoBehaviour:
   - Destination: {x: 15.144, y: -2.489, z: 6.963}
     time: 5
     distance: 7
+    focusCamera: 0
+    timeToStartCamFollow: 0
+    timeToStopCamFollow: 0
+    cameraLocation: {x: 0, y: 0, z: 0}
   - Destination: {x: 7.454, y: -1.04, z: 30.555}
     time: 2
     distance: 10
+    focusCamera: 0
+    timeToStartCamFollow: 0
+    timeToStopCamFollow: 0
+    cameraLocation: {x: 43.918144, y: -0.45694578, z: -203.94168}
   - Destination: {x: -3.772, y: -3.546, z: -2.026}
     time: 1
     distance: 7
+    focusCamera: 1
+    timeToStartCamFollow: 0
+    timeToStopCamFollow: 5
+    cameraLocation: {x: 17.140436, y: -4.4824963, z: -211.04112}
   - Destination: {x: -8.51, y: 27.66, z: 91.59692}
     time: 5.4
     distance: 50
+    focusCamera: 0
+    timeToStartCamFollow: 0
+    timeToStopCamFollow: 0
+    cameraLocation: {x: 0, y: 0, z: 0}
   - Destination: {x: -21.091248, y: 2.18, z: 212.44272}
     time: 4
     distance: 10
+    focusCamera: 0
+    timeToStartCamFollow: 0
+    timeToStopCamFollow: 0
+    cameraLocation: {x: 0, y: 0, z: 0}
   - Destination: {x: -20.556, y: 9.752, z: 224.3}
     time: 2
     distance: 10.27
+    focusCamera: 0
+    timeToStartCamFollow: 0
+    timeToStopCamFollow: 0
+    cameraLocation: {x: 0, y: 0, z: 0}
   - Destination: {x: 143.30878, y: -21.523, z: 389.78122}
     time: 20
     distance: 7
+    focusCamera: 0
+    timeToStartCamFollow: 0
+    timeToStopCamFollow: 0
+    cameraLocation: {x: 0, y: 0, z: 0}
   ringLocation: 2
   ringPickUpEvents:
     m_PersistentCalls:
@@ -928,6 +958,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+  crowCam: {fileID: 0}
 --- !u!114 &5369061912016083089
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -961,6 +992,117 @@ MonoBehaviour:
   interactionPoint: {fileID: 4064422878659338161}
   interactionDistance: 2
   interactionText: '"E" To Take Braclet.'
+--- !u!82 &3312299977416615269
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1930547160686320946}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 1bf2a337bad97374ca8a688dbdc34658, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 186.96352
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &7250308231411845590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1930547160686320946}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf0584674a93d1d4287ed3d197eadb7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minMaxTimeBetweenGames: {x: 5, y: 20}
+  clips:
+  - {fileID: 8300000, guid: 1bf2a337bad97374ca8a688dbdc34658, type: 3}
 --- !u!1 &2023478366265939761
 GameObject:
   m_ObjectHideFlags: 0

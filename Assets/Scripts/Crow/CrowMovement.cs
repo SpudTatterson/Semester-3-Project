@@ -1,4 +1,4 @@
-using System.Collections;
+  using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using Cinemachine;
@@ -54,6 +54,7 @@ public class CrowMovement : MonoBehaviour
         if (crowDestinations[currentLocation + 1].focusCamera)
         {
             Invoke("StartCamFollow", crowDestinations[currentLocation + 1].timeToStartCamFollow);
+            Invoke("StopCamFollow", crowDestinations[currentLocation + 1].camFollowTime);
         }
 
         while (Time.time < startTime + journeyTime)

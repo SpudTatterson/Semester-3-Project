@@ -8,5 +8,6 @@ public float distance;
 public bool focusCamera;
 public float timeToStartCamFollow;
 public float timeToStopCamFollow;
+public float camFollowTime;
 public Vector3 cameraLocation;
 }

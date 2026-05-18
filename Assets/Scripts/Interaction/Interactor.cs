@@ -38,7 +38,7 @@ public class Interactor : MonoBehaviour
         RaycastHit hit;
         if (Physics.SphereCast(ray, interactionRadius, out hit, maxInteractionDistance, interactMask))
         {
-            if ((hit.collider.gameObject.layer != interactableLayer) /*|| (hit.distance > maxInteractionDistance)*/)
+            if (hit.collider.gameObject.layer != interactableLayer /*|| (hit.distance > maxInteractionDistance)*/)
             {
                 StopInteract();
                 return;

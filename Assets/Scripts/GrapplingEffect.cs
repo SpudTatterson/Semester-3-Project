@@ -109,6 +109,7 @@ public class GrapplingEffect : MonoBehaviour
         }
         if(CheckHit() && !impactSoundPlayed)
         {
+            grappling.StartSwing();
             audioSource.Stop();
             audioSource.PlayOneShot(impactClip);
             impactSoundPlayed = true;

@@ -40,7 +40,8 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Misc Settings")]
     [SerializeField] float rotationSpeed = 7f;
-    
+    [SerializeField] float customGravity = -9.8f;
+
 
     [Header("Ground Check")]
     [SerializeField] float groundOffset = 2f;
@@ -59,13 +60,13 @@ public class PlayerMovement : MonoBehaviour
     Animator animator;
     [SerializeField] Transform headConstraint;
     ManagersManager managers;
-    
+
     [Header("Inputs")]
     float horizInput;
     float verticalInput;
 
 
-   
+
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -77,6 +78,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        rb.AddForce(new Vector3(0, customGravity, 0));
         isGrounded = GroundCheck();
 
         GetInput();
@@ -96,8 +98,8 @@ public class PlayerMovement : MonoBehaviour
     {
         horizInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
-        
-        if(Input.GetKey(jumpKey) && canJump && isGrounded)
+
+        if (Input.GetKey(jumpKey) && canJump && isGrounded)
         {
             canJump = false;
             Jump();
@@ -106,18 +108,18 @@ public class PlayerMovement : MonoBehaviour
     }
     void StateHandler()
     {
-        
+
         animator.SetBool("Grounded", isGrounded);
         animator.SetBool("WallRunning", wallRunning);
 
-        if(isGrounded && Input.GetKey(sprintKey))
+        if (isGrounded && Input.GetKey(sprintKey))
         {
             animator.SetFloat("Speed", rb.velocity.magnitude);
             state = MovementState.sprinting;
             moveSpeed = runSpeed;
         }
 
-        else if(isGrounded)
+        else if (isGrounded)
         {
             state = MovementState.walking;
 
@@ -125,19 +127,19 @@ public class PlayerMovement : MonoBehaviour
             moveSpeed = walkSpeed;
         }
 
-        else 
+        else
         {
             state = MovementState.air;
         }
 
-        if(wallRunning)
+        if (wallRunning)
         {
             state = MovementState.WallRunning;
-            
+
             moveSpeed = wallRunSpeed;
         }
 
-        if(swinging && !isGrounded)
+        if (swinging && !isGrounded)
         {
             state = MovementState.Swinging;
 
@@ -147,20 +149,20 @@ public class PlayerMovement : MonoBehaviour
         }
     }
     void MoveHead()
-    {  
+    {
         Ray ray = cam.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
         Vector3 targetPosition;
         Vector3 targetDirection;
         Vector3 pointAlongRay = ray.origin + ray.direction * 20;
         targetPosition = VectorUtility.FlattenVector(pointAlongRay, headConstraint.position.y);
-        targetDirection = VectorUtility.GetDirection(transform.position, targetPosition);        
+        targetDirection = VectorUtility.GetDirection(transform.position, targetPosition);
         float angle = Vector3.Angle(transform.forward, targetDirection);
-        if(angle < 150)  headConstraint.position = targetPosition;
-        else 
+        if (angle < 150) headConstraint.position = targetPosition;
+        else
         {
             managers.ikRig.SwitchHeadAimRigSource();
         }
-       
+
     }
     void MovePlayer()
     {
@@ -168,7 +170,7 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 camForward = cam.transform.forward;
         Vector3 camRight = cam.transform.right;
-        
+
         camForward.y = 0;
         camForward.Normalize();
         camRight.y = 0;
@@ -176,44 +178,53 @@ public class PlayerMovement : MonoBehaviour
 
         moveDir = inputDir.z * camForward + inputDir.x * camRight;
 
-        if(moveDir != Vector3.zero) orientation.transform.forward = moveDir;
+        if (moveDir != Vector3.zero) orientation.transform.forward = moveDir;
 
         Debug.DrawRay(transform.position + transform.up * 1, moveDir);
 
-        if(swinging && !isGrounded) return;
+        if (swinging && !isGrounded) return;
 
         rb.useGravity = !OnSlope();
 
-        if(OnSlope())
+        if (OnSlope())
         {
             rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 5, ForceMode.Force);
             return;
         }
 
-        if(isGrounded)
+        if (isGrounded)
             rb.AddForce(moveDir.normalized * moveSpeed * 10f, ForceMode.Force);
 
-        else if(!isGrounded)
+        else if (!isGrounded)
             rb.AddForce(moveDir.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
 
-        
+
     }
+    public void OnLand()
+    {
+
+    }
+    public void OnFootstep()
+    {
+
+    }
+
     void Jump()
     {
         rb.velocity = VectorUtility.FlattenVector(rb.velocity);
-        animator.SetBool("Jump",!canJump);
+        animator.SetBool("Jump", !canJump);
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }
     void ResetJump()
     {
         canJump = true;
-        animator.SetBool("Jump",!canJump);
+        animator.SetBool("Jump", !canJump);
     }
     void SpeedControl()
     {
-        if(OnSlope())
+        if (OnSlope())
         {
-            if(rb.velocity.magnitude > moveSpeed)
+            if (rb.velocity.magnitude > moveSpeed)
             {
                 rb.velocity = rb.velocity.normalized * moveSpeed;
             }
@@ -222,7 +233,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Vector3 flatVel = VectorUtility.FlattenVector(rb.velocity);
 
-            if(flatVel.magnitude > moveSpeed)
+            if (flatVel.magnitude > moveSpeed)
             {
                 Vector3 limitedVel = flatVel.normalized * moveSpeed;
                 rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
@@ -233,18 +244,18 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y + groundOffset,
         transform.position.z);
-        
+
         return Physics.CheckSphere(spherePosition, groundedRadius, whatIsGround, QueryTriggerInteraction.Ignore);
     }
     void RotatePlayer()
     {
-        if(moveDir != Vector3.zero)
+        if (moveDir != Vector3.zero)
             transform.forward = Vector3.Slerp(transform.forward, moveDir.normalized, Time.deltaTime * rotationSpeed);
     }
     bool OnSlope()
     {
-        if(!isGrounded) return false;
-        if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, 4f))
+        if (!isGrounded) return false;
+        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, 4f))
         {
             float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
             return angle < maxSlopeAngle && angle != 0;
